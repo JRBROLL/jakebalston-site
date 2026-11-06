@@ -1,0 +1,10 @@
+// Cloudflare settings for jakebalston.com (a Worker serving this folder as a static site)
+{
+  "name": "jakebalston-site",
+  "compatibility_date": "2026-11-01",
+  "assets": {
+    "directory": ".",
+    "html_handling": "auto-trailing-slash",   // /osprey-house -> /osprey-house/
+    "not_found_handling": "404-page"          // unknown addresses show 404.html
+  }
+}
