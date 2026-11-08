@@ -1,6 +1,6 @@
 // Cloudflare settings for jakebalston.com (a Worker serving this folder as a static site)
 {
-  "name": "jakebalston-site",
+  "name": "jakebalston",
   "compatibility_date": "2026-11-01",
   "assets": {
     "directory": ".",
