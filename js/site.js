@@ -103,12 +103,12 @@ const half=side=>!isBook()? "1/13" : side==="L" ? "1/7" : side==="R" ? "7/13" : 
    each sits whole inside a box on the grid, within the band between them. */
 const band=(t,h)=>`top:calc(var(--top) + (100% - var(--top) - var(--bot)) * ${t});height:calc((100% - var(--top) - var(--bot)) * ${h})`;
 function imgBox(p,i,cols,t=0,h=1,pos="center"){
-  return `<div class="cell" style="grid-column:${cols}"><div class="ib" style="${band(t,h)}"><img src="${img(p,i)}" style="object-position:${pos}" alt="${esc(p.title)}${known(p.architect)?", "+esc(p.architect):""}, image ${i+1}"></div></div>`;
+  return `<div class="cell" style="grid-column:${cols}"><div class="ib" style="${band(t,h)}"><img src="${img(p,i)}" style="object-position:${pos}" alt="${altText(p,i)}"></div></div>`;
 }
 function fullHalf(p,i,side,src,crop){
   const W=innerWidth/2+parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--pad")||20), H=innerHeight;
   const cover = crop || Math.abs(Math.log(ratio(p,i)/(W/H)))<.22;   // near the shape of the half: fill it; otherwise show whole at full height
-  return `<div class="cell full ${side==="L"?"bleedL":"bleedR"}" style="grid-column:${side==="L"?"1/7":"7/13"}"><img src="${src||img(p,i)}" style="object-fit:${cover?"cover":"contain"};object-position:${side==="L"?"left":"right"} center" alt="${esc(p.title)}${known(p.architect)?", "+esc(p.architect):""}"></div>`;
+  return `<div class="cell full ${side==="L"?"bleedL":"bleedR"}" style="grid-column:${side==="L"?"1/7":"7/13"}"><img src="${src||img(p,i)}" style="object-fit:${cover?"cover":"contain"};object-position:${side==="L"?"left":"right"} center" alt="${altText(p,i)}"></div>`;
 }
 function imageCell(p,i,side){ return imgBox(p,i,half(side),0,1, side==="L"?"left center":side==="R"?"right center":"center"); }
 const textCell=(side,inner,cls="",attrs="")=>`<div class="cell ${cls}" style="grid-column:${half(side)}" ${attrs}><div class="tbox">${inner}</div></div>`;
@@ -248,8 +248,12 @@ function geo(){
   return _geo={W,H,pad,gut,colW,top,bandH:H-top-bot,
     span(c){ const [a,b]=c.split("/").map(Number); return {L:pad+(a-1)*(colW+gut), W:(b-a)*colW+(b-a-1)*gut}; }};
 }
+/* Photo descriptions from content.js (ALTS); falls back to project, architect and number */
+function altPlain(p,i){ const d=(typeof ALTS!=="undefined" && ALTS[p.slug]) ? ALTS[p.slug][String(i+1)] : "";
+  return d || `${p.title}${known(p.architect)?", "+p.architect:""}, photograph ${i+1} by Jake Balston`; }
+function altText(p,i){ return esc(altPlain(p,i)); }
 function figure(p,i,left,top,w){
-  return `<figure class="ph" style="left:${left}px;top:${top}px;width:${w}px"><img src="${img(p,i)}" width="${Math.round(w)}" height="${Math.round(w/ratio(p,i))}" alt="${esc(p.title)}${known(p.architect)?", "+esc(p.architect):""}, image ${i+1}"></figure>`;
+  return `<figure class="ph" style="left:${left}px;top:${top}px;width:${w}px"><img src="${img(p,i)}" width="${Math.round(w)}" height="${Math.round(w/ratio(p,i))}" alt="${altText(p,i)}"></figure>`;
 }
 function place(p,i,slot){
   const g=_geo, sp=g.span(slot.c), r=ratio(p,i);
@@ -313,7 +317,7 @@ function renderProject(){
   setTimeout(updateQuiet,0);
   let html="";
   if(state.mode==="index"){
-    html=`<div class="cell" style="grid-column:1/13"><div class="tbox full" style="display:block"><div class="scroll" style="height:100%"><div class="ix">${shown(p).map(i=>`<button data-img="${i}"><img loading="lazy" src="${thumb(p,i)}" alt="${esc(p.title)} image ${i+1}"></button>`).join("")}</div></div></div></div>`;
+    html=`<div class="cell" style="grid-column:1/13"><div class="tbox full" style="display:block"><div class="scroll" style="height:100%"><div class="ix">${shown(p).map(i=>`<button data-img="${i}"><img loading="lazy" src="${thumb(p,i)}" alt="${altText(p,i)}"></button>`).join("")}</div></div></div></div>`;
   } else if(sp.type==="open") html=textCell("L",openerInner(p))+(book?fullHalf(p,cov(p),"R",null,true):imgBox(p,cov(p),"7/13",0,1,"right center"));
   else if(sp.type==="book") html=bookSpread(p,sp);
   else if(sp.type==="opentext") html=textCell("X",openerInner(p));
@@ -345,7 +349,7 @@ function renderHome(){
   if(!book){
     swap(`<div class="cell" style="grid-column:1/13">
       <a id="homeImg" href="/${p.slug}/" data-img="${pi}" style="position:absolute;left:8%;right:8%;top:22%;height:50%;display:block">
-        <img src="${img(p,pi)}" alt="${esc(p.title)}" style="width:100%;height:100%;object-fit:contain;object-position:center;transition:opacity .6s"></a></div>`);
+        <img src="${img(p,pi)}" alt="${altText(p,pi)}" style="width:100%;height:100%;object-fit:contain;object-position:center;transition:opacity .6s"></a></div>`);
     setFoot([["1/13",`<div style="text-align:center">Architecture and interiors, photographed<br>for architects, designers and publishers.</div>`]]);
   } else swap(`<div class="cell" style="grid-column:1/13">
       <div style="position:absolute;left:0;${book?"top:50%;transform:translateY(-50%)":"top:var(--top)"};text-transform:uppercase;letter-spacing:.08em">Architectural photography</div>
@@ -353,7 +357,7 @@ function renderHome(){
     </div>
     <div class="cell" style="grid-column:${book?"6/8":"4/10"}">
       <a id="homeImg" href="/${p.slug}/" data-img="${pi}" style="position:absolute;left:0;right:0;top:${book?"31%":"30%"};height:${book?"38%":"34%"};display:block">
-        <img src="${thumb(p,pi)}" alt="${esc(p.title)}" style="width:100%;height:100%;object-fit:contain;object-position:center;transition:opacity .6s"></a>
+        <img src="${thumb(p,pi)}" alt="${altText(p,pi)}" style="width:100%;height:100%;object-fit:contain;object-position:center;transition:opacity .6s"></a>
     </div>`);
   if(book) setFoot([["1/2","JB"],["2/3","2026"],["5/9",`<div style="text-align:center">Architecture and interiors, photographed<br>for architects, designers and publishers.</div>`],["11/13",`${PROJECTS.filter(p=>p.section==="commissions").length} projects`,"right"]]);
   clearInterval(homeTimer);
@@ -361,7 +365,7 @@ function renderHome(){
     if(state.route!=="home") return clearInterval(homeTimer);
     homeK++; const [q,qi]=HOME_ALL[homeK%HOME_ALL.length], a=$("homeImg"); if(!a) return;
     const im=a.querySelector("img"); im.style.opacity=0;
-    const nx=new Image(); nx.onload=()=>{ im.src=nx.src; im.alt=q.title; a.href="/"+q.slug+"/"; a.dataset.img=qi; im.style.opacity=1; }; setTimeout(()=>{ nx.src=isBook()?thumb(q,qi):img(q,qi); },600);
+    const nx=new Image(); nx.onload=()=>{ im.src=nx.src; im.alt=altPlain(q,qi); a.href="/"+q.slug+"/"; a.dataset.img=qi; im.style.opacity=1; }; setTimeout(()=>{ nx.src=isBook()?thumb(q,qi):img(q,qi); },600);
   },4500);
 }
 
@@ -436,7 +440,7 @@ function renderJournal(list, book){
     html+=`<div class="jset" data-j="${it.p?it.p.slug:""}" style="left:${cx}px;top:${y+(rh-h)}px;height:${h}px">`+
       it.prints.map((q,j)=>{ const pw=h*q.r, l=it.prints.slice(0,j).reduce((a,z)=>a+h*z.r+hair,0);
         return q.ph ? `<span class="jph" style="left:${l}px;width:${pw}px"></span>`
-                    : `<a href="/${it.p.slug}/" data-ji="${q.i}" style="left:${l}px;width:${pw}px"><img loading="lazy" src="${q.src}" alt="${esc(it.title)}"></a>`; }).join("")+
+                    : `<a href="/${it.p.slug}/" data-ji="${q.i}" style="left:${l}px;width:${pw}px"><img loading="lazy" src="${q.src}" alt="${it.p?altText(it.p,q.i):esc(it.title)}"></a>`; }).join("")+
       `<span class="n">${fmtDate(it.date)}</span></div>`;
     x=start+w;
     if(x>col*2.5 && rnd(++k)<.5){ pg++; x=0; if(pg>=pages){ pg=0; row++; } }      // sometimes a page row keeps just one cluster
