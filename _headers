@@ -1,3 +1,5 @@
+/vid/*
+  Cache-Control: public, max-age=2592000
 /img/*
   Cache-Control: public, max-age=2592000
 /og/*

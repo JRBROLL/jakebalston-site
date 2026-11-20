@@ -7,6 +7,8 @@ const WADA = {   // exact swatches only. pale = paper, ink = text, acc = small d
   296:{pale:"#f5ecc2", ink:"#34454c", acc:"#71502f", names:"Sulpher Yellow · Slate Color · Pale Raw Umber"},
   "296b":{pale:"#f5ecc2", ink:"#71502f", acc:"#34454c", names:"Sulpher Yellow · Pale Raw Umber · Slate Color", plate:296},
   190:{pale:"#ebd3a2", ink:"#111314", acc:"#d96629", names:"Ivory Buff · Black · English Red"},
+  234:{pale:"#fdc57e", ink:"#71502f", acc:"#71502f", names:"Cinnamon Buff · Pale Raw Umber · Pale King's Blue"},
+  192:{pale:"#fdbf68", ink:"#4b3317", acc:"#70727c", names:"Cream Yellow · Vandyke Brown · Deep Violet / Plumbeous"},
   243:{pale:"#ebd3a2", ink:"#34454c", acc:"#bb7125", names:"Ivory Buff · Slate Color · Raw Sienna"},
   246:{pale:"#f5ecc2", ink:"#a84222", acc:"#a84222", names:"Sulpher Yellow · Brick Red"},
   126:{pale:"#ebd3a2", ink:"#1c4286", acc:"#1c4286", names:"Ivory Buff · Deep Lyons Blue"},
@@ -17,13 +19,19 @@ const WADA = {   // exact swatches only. pale = paper, ink = text, acc = small d
   151:{pale:"#f5ecc2", ink:"#064f6e", acc:"#064f6e", names:"Sulpher Yellow · Vandar Poel's Blue"},
   266:{pale:"#ebd3a2", ink:"#00978d", acc:"#e31f26", names:"Ivory Buff · Benzol Green · Spectrum Red"},
   310:{pale:"#f5ecc2", ink:"#253122", acc:"#837e31", names:"Sulpher Yellow · Deep Slate Olive · Olive"},
+  207:{pale:"#b4cdc2", ink:"#111314", acc:"#a36752", names:"Glaucous Green · Black · Sudan Brown"},
+  52:{pale:"#f5ecc2", ink:"#111314", acc:"#111314", names:"Sulpher Yellow · Black"},
+  55:{pale:"#ffffff", ink:"#d46d7a", acc:"#d46d7a", names:"White · Old Rose"},
+  84:{pale:"#fdd4bd", ink:"#112f2c", acc:"#112f2c", names:"Seashell Pink · Deep Slate Green"},
+  60:{pale:"#ffefae", ink:"#12354e", acc:"#12354e", names:"Pale Lemon Yellow · Dark Tyrian Blue"},
+  321:{pale:"#f5ecc2", ink:"#253122", acc:"#97acc8", names:"Sulpher Yellow · Deep Slate Olive · Salvia Blue · Light Brown Drab"},
   343:{pale:"#ebd3a2", ink:"#ae5224", acc:"#064f6e", names:"Ivory Buff · Burnt Sienna · Vandar Poel's Blue"},
 };
 // Hand-set running orders: [spread, image numbers…]. Images left out are dropped from the project.
 
 
 // Every swatch on each plate, in the book's order, for the little colour tag at the left edge
-const PLATE_SWATCHES = {"266": ["#e31f26", "#ebd3a2", "#8fa071", "#00978d"], "310": ["#f5ecc2", "#eeb480", "#837e31", "#253122"], "296": ["#f5ecc2", "#d8a37b", "#71502f", "#34454c"], "190": ["#ebd3a2", "#d96629", "#111314"], "243": ["#bb7125", "#ebd3a2", "#6b7140", "#34454c"], "246": ["#f8b6ba", "#a84222", "#f5ecc2", "#fdc57e"], "126": ["#ebd3a2", "#e2b540", "#1c4286"], "262": ["#da525d", "#ebd3a2", "#b09f36", "#437742"], "214": ["#ebd3a2", "#a36752", "#4f4086"], "113": ["#fdd4bd", "#4b3317"], "270": ["#da525d", "#f5ecc2", "#6b7140", "#437742"], "151": ["#f5ecc2", "#f99d1b", "#064f6e"], "343": ["#ae5224", "#ebd3a2", "#635a3a", "#064f6e"]};
+const PLATE_SWATCHES = {"60": ["#ffefae", "#12354e"], "84": ["#fdd4bd", "#112f2c"], "55": ["#ffffff", "#d46d7a"], "321": ["#f5ecc2", "#253122", "#97acc8", "#b59392"], "52": ["#f5ecc2", "#111314"], "207": ["#b4cdc2", "#111314", "#a36752"], "234": ["#fdc57e", "#71502f", "#a7d4e4"], "192": ["#fdbf68", "#4b3317", "#70727c"], "266": ["#e31f26", "#ebd3a2", "#8fa071", "#00978d"], "310": ["#f5ecc2", "#eeb480", "#837e31", "#253122"], "296": ["#f5ecc2", "#d8a37b", "#71502f", "#34454c"], "190": ["#ebd3a2", "#d96629", "#111314"], "243": ["#bb7125", "#ebd3a2", "#6b7140", "#34454c"], "246": ["#f8b6ba", "#a84222", "#f5ecc2", "#fdc57e"], "126": ["#ebd3a2", "#e2b540", "#1c4286"], "262": ["#da525d", "#ebd3a2", "#b09f36", "#437742"], "214": ["#ebd3a2", "#a36752", "#4f4086"], "113": ["#fdd4bd", "#4b3317"], "270": ["#da525d", "#f5ecc2", "#6b7140", "#437742"], "151": ["#f5ecc2", "#f99d1b", "#064f6e"], "343": ["#ae5224", "#ebd3a2", "#635a3a", "#064f6e"]};
 const plateOf = k => (WADA[k]&&WADA[k].plate) || k;
 const SITE_COLOUR = 296;
 
@@ -84,6 +92,24 @@ const HOME_ROTATION = ["osprey-house","hampstead-house","chatham","deyne-avenue"
 function ratio(p,i){ const d=DIMS[p.slug][i]; return d[0]/d[1]; }
 function img(p,i){ return `/img/${p.slug}-${String(i+1).padStart(2,"0")}.webp`; }
 function thumb(p,i){ return `/img/${p.slug}-${String(i+1).padStart(2,"0")}-t.webp`; }
+/* Moving photographs: the still is the poster and stays in place; the clip loads only when it is on screen and fades in over it */
+const hasVid=(p,i)=>typeof VIDS!=="undefined" && (VIDS[p.slug]||[]).includes(i+1);
+const vidSrc=(p,i)=>`/vid/${p.slug}-${String(i+1).padStart(2,"0")}.mp4`;
+const vidTag=(p,i,style="")=>hasVid(p,i)?`<video class="mv" muted loop playsinline preload="none" disablepictureinpicture aria-hidden="true" data-src="${vidSrc(p,i)}" style="${style}"></video>`:"";
+const calm=matchMedia("(prefers-reduced-motion: reduce)");
+let vidObs=null;
+function wakeVideos(){
+  if(vidObs) vidObs.disconnect();
+  const vs=[...document.querySelectorAll("#stage video.mv")]; if(!vs.length || calm.matches) return;
+  vidObs=new IntersectionObserver(es=>es.forEach(e=>{
+    const v=e.target;
+    if(e.isIntersecting){
+      if(!v.src){ v.src=v.dataset.src; v.addEventListener("playing",()=>v.classList.add("on"),{once:true}); }
+      v.play().catch(()=>{});
+    } else v.pause();
+  }),{threshold:.25});
+  vs.forEach(v=>vidObs.observe(v));
+}
 function preload(p,list){ list.forEach(i=>{ if(i>=0&&i<p.count){ const im=new Image(); im.src=img(p,i);} }); }
 
 /* ---------- Helpers ---------- */
@@ -105,10 +131,10 @@ const band=(t,h)=>`top:calc(var(--top) + (100% - var(--top) - var(--bot)) * ${t}
 function imgBox(p,i,cols,t=0,h=1,pos="center"){
   return `<div class="cell" style="grid-column:${cols}"><div class="ib" style="${band(t,h)}"><img src="${img(p,i)}" style="object-position:${pos}" alt="${altText(p,i)}"></div></div>`;
 }
-function fullHalf(p,i,side,src,crop){
+function fullHalf(p,i,side,src,crop,mov){
   const W=innerWidth/2+parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--pad")||20), H=innerHeight;
   const cover = crop || Math.abs(Math.log(ratio(p,i)/(W/H)))<.22;   // near the shape of the half: fill it; otherwise show whole at full height
-  return `<div class="cell full ${side==="L"?"bleedL":"bleedR"}" style="grid-column:${side==="L"?"1/7":"7/13"}"><img src="${src||img(p,i)}" style="object-fit:${cover?"cover":"contain"};object-position:${side==="L"?"left":"right"} center" alt="${altText(p,i)}"></div>`;
+  return `<div class="cell full ${side==="L"?"bleedL":"bleedR"}" style="grid-column:${side==="L"?"1/7":"7/13"}"><img src="${src||img(p,i)}" style="object-fit:${cover?"cover":"contain"};object-position:${p.coverAlign&&mov?p.coverAlign:side==="L"?"left":"right"} center" alt="${altText(p,i)}">${!mov?"":vidTag(p,i,`object-fit:${cover?"cover":"contain"};object-position:${p.coverAlign||(side==="L"?"left":"right")} center`)}</div>`;
 }
 function imageCell(p,i,side){ return imgBox(p,i,half(side),0,1, side==="L"?"left center":side==="R"?"right center":"center"); }
 const textCell=(side,inner,cls="",attrs="")=>`<div class="cell ${cls}" style="grid-column:${half(side)}" ${attrs}><div class="tbox">${inner}</div></div>`;
@@ -233,7 +259,8 @@ function phonePage(p,sp){
 }
 function phoneWords(q){
   const words=q.q.split(" "), lines=[];
-  for(let j=0;j<words.length;){ const n=[2,1,2,1][lines.length%4]; lines.push(words.slice(j,j+n).join(" ")); j+=n; }
+  if(q.lines) lines.push(...q.lines);
+  else for(let j=0;j<words.length;){ const n=[2,1,2,1][lines.length%4]; lines.push(words.slice(j,j+n).join(" ")); j+=n; }
   return `<div class="cell" style="grid-column:1/13"><div class="pwords">${lines.map((l,k)=>`<span style="padding-left:${[1.2,0,2.6,1.6,3.4,.6][k%6]}em">${esc(l)}</span>`).join("")}<span class="dim by" style="padding-left:2.6em">${esc(q.by)}</span></div></div>`;
 }
 const spreads=p=>isBook()?spreadsBook(p):spreadsSingle(p);
@@ -253,7 +280,7 @@ function altPlain(p,i){ const d=(typeof ALTS!=="undefined" && ALTS[p.slug]) ? AL
   return d || `${p.title}${known(p.architect)?", "+p.architect:""}, photograph ${i+1} by Jake Balston`; }
 function altText(p,i){ return esc(altPlain(p,i)); }
 function figure(p,i,left,top,w){
-  return `<figure class="ph" style="left:${left}px;top:${top}px;width:${w}px"><img src="${img(p,i)}" width="${Math.round(w)}" height="${Math.round(w/ratio(p,i))}" alt="${altText(p,i)}"></figure>`;
+  return `<figure class="ph" style="left:${left}px;top:${top}px;width:${w}px"><img src="${img(p,i)}" width="${Math.round(w)}" height="${Math.round(w/ratio(p,i))}" alt="${altText(p,i)}">${vidTag(p,i)}</figure>`;
 }
 function place(p,i,slot){
   const g=_geo, sp=g.span(slot.c), r=ratio(p,i);
@@ -271,7 +298,8 @@ function equalPair(p,a,b){
 /* Words stepped down an empty page, like the Japanese studio site */
 function stepped(quote, side){
   const g=_geo, sp=g.span(side==="L"?"2/6":"8/12"), words=quote.q.split(" "), lines=[];
-  for(let j=0;j<words.length;){ const n=[2,1,2,1][lines.length%4]+(words.length>9?1:0); lines.push(words.slice(j,j+n).join(" ")); j+=n; }
+  if(quote.lines) lines.push(...quote.lines);   // hand-set line breaks, e.g. a poem
+  else for(let j=0;j<words.length;){ const n=[2,1,2,1][lines.length%4]+(words.length>9?1:0); lines.push(words.slice(j,j+n).join(" ")); j+=n; }
   return `<div class="stepq" style="left:${sp.L}px;width:${sp.W}px;bottom:calc(var(--bot) + ${g.bandH*.12}px)">${lines.map((l,k)=>`<span style="padding-left:${[1.2,0,2.6,1.6,3.4,.6][k%6]}em">${esc(l)}</span>`).join("")}<span class="dim by" style="padding-left:2.6em">${esc(quote.by)}</span></div>`;
 }
 /* Two photos on a spread, after Casa Olivè (22–23, 32–33, 14–15): never matched in size, always on a diagonal —
@@ -301,10 +329,10 @@ function bookSpread(p,sp){
 function openerInner(p){
   const t=fitDisplay(p.title, isBook()?6:12);
   const wk=PROJECT_COLOUR[p.slug], w=WADA[wk]||{};
-  const facts=[["Architect",p.architect],["With",p.with],["Location",p.place],["Year",p.year],["Recognition",p.note],["Colour",`Wada ${plateOf(wk)}`]].filter(([,v])=>v)
-    .map(([k,v])=>{
+  const facts=[[p.archLabel||"Architect",p.architect],...(p.credits||[]),["Client",p.client],["With",p.with],["Location",p.place],["Year",p.year],["Recognition",p.note],["Colour",`Wada ${plateOf(wk)}`]].filter(([,v])=>v)
+    .map(([k,v,u])=>{
       // The architect's name links to their practice (opens in a new tab); project pages are never linked
-      const val = k==="Architect" && p.site ? `<a class="ext" href="${p.site}" target="_blank" rel="noopener">${esc(v)}</a>` : k==="Colour" ? v : esc(v);
+      const val = u ? `<a class="ext" href="${u}" target="_blank" rel="noopener">${esc(v)}</a>` : k===(p.archLabel||"Architect") && p.site ? `<a class="ext" href="${p.site}" target="_blank" rel="noopener">${esc(v)}</a>` : k==="Colour" ? v : esc(v);
       return `<div class="lab">${k}</div><div style="margin-bottom:10px" class="${k==="Recognition"?"acc":""}">${val}</div>`; }).join("");
   return `<div style="grid-column:1/4;grid-row:1">${facts}</div>
     <div style="grid-column:4/7;grid-row:1">${p.text?esc(p.text):''}<div class="lab" style="margin-top:14px">${shown(p).length} photographs</div></div>
@@ -318,7 +346,7 @@ function renderProject(){
   let html="";
   if(state.mode==="index"){
     html=`<div class="cell" style="grid-column:1/13"><div class="tbox full" style="display:block"><div class="scroll" style="height:100%"><div class="ix">${shown(p).map(i=>`<button data-img="${i}"><img loading="lazy" src="${thumb(p,i)}" alt="${altText(p,i)}"></button>`).join("")}</div></div></div></div>`;
-  } else if(sp.type==="open") html=textCell("L",openerInner(p))+(book?fullHalf(p,cov(p),"R",null,true):imgBox(p,cov(p),"7/13",0,1,"right center"));
+  } else if(sp.type==="open") html=textCell("L",openerInner(p))+(book?fullHalf(p,cov(p),"R",null,true,true):imgBox(p,cov(p),"7/13",0,1,"right center"));
   else if(sp.type==="book") html=bookSpread(p,sp);
   else if(sp.type==="opentext") html=textCell("X",openerInner(p));
   else if(sp.type==="phone") html=phonePage(p,sp);
@@ -326,15 +354,25 @@ function renderProject(){
   swap(html);
   [S[state.page+1],S[state.page-1]].forEach(x=>x&&preload(p,x.imgs));
 
-  const nums=sp.imgs.length? sp.imgs.map(i=>pad(i+1)).join("–") : "00";
+  const nums=sp.imgs.length? sp.imgs.map(i=>pad(dispNo(p,i))).join("–") : "00";
+  // artwork in the photos on screen: title and artist (linked to their site) beside the counter
+  const arts=(typeof ARTWORKS!=="undefined" && ARTWORKS[p.slug] && state.mode!=="index") ? sp.imgs.map(i=>ARTWORKS[p.slug][String(i+1)]).filter(Boolean) : [];
+  const credit=!arts.length?"":sp.imgs.filter(i=>ARTWORKS[p.slug]&&ARTWORKS[p.slug][String(i+1)]).map(i=>[dispNo(p,i),...ARTWORKS[p.slug][String(i+1)]]).map(([n,t,by,u])=>`<span class="dim">${pad(n)}</span>&ensp;<i>${esc(t)}</i>, ${u?`<a class="ext" href="${u}" target="_blank" rel="noopener">${esc(by)}</a>`:esc(by)}`).join("<br>");
   const next=nextProject(p);
   const ctl = `<button id="modeBtn">${state.mode==="index"?"Pages":"Index"}</button>&emsp;<a href="/${next.slug}/">Next project</a>`;
-  if(!book) setFoot([["1/5",ctl],["5/9",sp.imgs.length&&state.mode!=="index"?`<span class="dim">${nums} / ${pad(p.count)}</span>`:"","center"],["9/13",esc(p.title),"right"]]);
+  if(!book) setFoot([["1/5",ctl],["5/9",sp.imgs.length&&state.mode!=="index"?`<span class="dim">${nums} / ${pad(shown(p).length)}</span>`:"","center"],["9/13",credit||esc(p.title),"right"]]);
   else if(state.mode!=="index" && sp.type==="open") setFoot([["1/4",ctl]]);
-  else setFoot([["1/4",ctl],["6/7",state.mode==="index"?"":`${nums} / ${pad(p.count)}`],["7/8",`<span class="dim">Colour ${plateOf(PROJECT_COLOUR[p.slug])}</span>`],["10/13",esc(p.title),"right"]]);
+  else setFoot([["1/4",ctl],["6/7",state.mode==="index"?"":`${nums} / ${pad(shown(p).length)}`],["7/8",`<span class="dim">Colour ${plateOf(PROJECT_COLOUR[p.slug])}</span>`],["8/11",credit],["11/13",esc(p.title),"right"]]);
   swatchTag(PROJECT_COLOUR[p.slug]);
   if(book && sp.type==="open" && state.mode!=="index") setTimeout(adaptNav,320);
   $("modeBtn").onclick=()=>{ state.mode=state.mode==="index"?"pages":"index"; renderProject(); };
+}
+/* Photos are numbered in the order they appear in the book, whatever their file numbers */
+function dispNo(p,i){
+  if(!p._disp){ p._disp={}; let n=0;
+    spreadsBook(p).filter(x=>x.type==="book").forEach(x=>x.imgs.forEach(k=>{ if(!(k in p._disp)) p._disp[k]=++n; }));
+    shown(p).forEach(k=>{ if(!(k in p._disp)) p._disp[k]=++n; }); }
+  return p._disp[i]||i+1;
 }
 function nextProject(p){ const same=PROJECTS.filter(x=>x.section===p.section); return same[(same.indexOf(p)+1)%same.length]; }
 
@@ -382,7 +420,7 @@ function renderList(section){
   if(J) return renderJournal(list, book);
   const pv=state.hover && bySlug[state.hover] && bySlug[state.hover].section===section ? bySlug[state.hover] : list[0];
   const table=`<div class="tbl"><div class="th"><span>${J?"Entry":"Project"}</span><span>${J?"About":"Architect"}</span><span class="c3">Location</span><span class="c4">Year</span></div>
-    ${list.map(x=>`<a href="/${x.slug}/" data-pv="${x.slug}" class="${book&&x===pv?"on":""}"><span class="t">${esc(x.title)}</span><span>${J?esc(x.role||""):known(x.architect)?esc(x.architect):"&nbsp;"}</span><span class="c3">${esc(x.place.split(",")[0]||"")}</span><span class="c4">${x.year}</span></a>`).join("")}</div>`;
+    ${list.map(x=>`<a href="/${x.slug}/" data-pv="${x.slug}" class="${book&&x===pv?"on":""}"><span class="t">${esc(x.title)}</span><span>${J?esc(x.role||""):x.listBy?esc(x.listBy):known(x.architect)?esc(x.architect):"&nbsp;"}</span><span class="c3">${esc(x.place.split(",")[0]||"")}</span><span class="c4">${x.listYear||x.year}</span></a>`).join("")}</div>`;
   if(book){
     swap(fullHalf(pv,cov(pv),"L",null,true).replace('class="cell','id="pv" class="cell')+
          `<div class="cell" style="grid-column:7/13"><div class="tbox full" style="display:block"><div class="scroll" style="height:100%">${table}</div></div></div>`);
@@ -401,7 +439,16 @@ function renderList(section){
    cross the spine, and each page holds one or two clusters per row at loose, uneven positions. On a phone it is one page. */
 const JOURNAL_TEST = false;        // 20 placeholder entries to judge the layout; switch off once real entries arrive
 function journalItems(list){
-  const items=list.map(p=>({p, date:p.date||"", title:p.title, prints:(p.pick||shown(p).slice(0,3)).map(i=>({r:ratio(p,i), src:thumb(p,i), i}))}));
+  // prints per entry follow the shape of the photos: narrow ones come in more, wide ones in fewer,
+  // filling roughly the same width (about three squares), so the sheet has an assorted rhythm
+  // each entry gets its own width, from about one print to four, fixed per entry (from its slug) so it never reshuffles
+  const BUDGETS=[1.2,2.3,3.25,4.1,2.8,1.7];
+  const budgetOf=p=>{ let h=0; for(const ch of p.slug) h=(h*31+ch.charCodeAt(0))>>>0; return BUDGETS[h%BUDGETS.length]; };
+  const printsOf=p=>{ const order=[...(p.pick||[]), ...shown(p).filter(i=>!(p.pick||[]).includes(i))], out=[], B=p.printBudget||budgetOf(p); let sum=0;
+    if(p.printCount) return order.slice(0,p.printCount).map(i=>({r:ratio(p,i), src:thumb(p,i), i}));   // set by hand
+    for(const i of order){ const r=ratio(p,i); if(out.length && sum+r>B) break; out.push({r, src:thumb(p,i), i}); sum+=r; if(out.length>=5) break; }
+    return out; };
+  const items=list.map(p=>({p, date:p.date||"", title:p.title, prints:printsOf(p)}));
   if(JOURNAL_TEST){
     const R=[.75,.75,1,1.33,1.5,.8], rnd=k=>{ const x=Math.sin(k*12.9898+3.1)*43758.5453; return x-Math.floor(x); };
     for(let e=0;e<20;e++){
@@ -420,39 +467,43 @@ function renderJournal(list, book){
   const rh=book? Math.max(96,Math.min(150,PW*.2,band*.2)) : Math.max(84,PW*.27), pitch=rh+(book?64:46), hair=book?10:7;
   const rnd=k=>{ let h=(k*2654435761)>>>0; h^=h>>>15; h=Math.imul(h,2246822519)>>>0; h^=h>>>13; return (h>>>0)/4294967296; };
   const items=journalItems(list);
-  let row=0, pg=0, x=0, k=0, html="";
+  let row=0, pg=0, x=0, k=0, html=""; const rowY=[0];
   const pageX=g=> g*(PW+gut);
   items.forEach((it,n)=>{
     let w=it.prints.reduce((a,q)=>a+rh*q.r,0)+hair*(it.prints.length-1);
     const sc = w>PW*.92 ? (PW*.92-hair*(it.prints.length-1))/(w-hair*(it.prints.length-1)) : 1;   // a wide cluster is shrunk to fit its page
     if(sc<1) w=PW*.92;
-    // where this cluster starts on the current page: first on a page may sit indented; later ones leave a loose gap
-    let start = x===0 ? (rnd(++k)<.4 ? col*(1+Math.floor(rnd(++k)*3)) : 0) : x + col*(.5+Math.floor(rnd(++k)*3)*.5);
+    // every row starts at the very left; the space between entries varies (on the right page, from the spine)
+    const indent=()=> pg===0 ? 0 : col*Math.floor(rnd(++k)*5)*.5;
+    // hand placement where set: jRow starts a new row, jPage moves to the next page, jGap sets the space before (in columns)
+    const P=it.p||{};
+    if((P.jRow && (x>0||pg>0)) || (P.jPage && x>0)){ pg++; x=0; if(P.jRow||pg>=pages){ pg=0; row++; } }
+    let start = x===0 ? (P.jGap!=null&&pg>0 ? col*P.jGap : indent()) : x + (P.jGap!=null ? col*P.jGap : col*(1+Math.floor(rnd(++k)*4)*.5));   // at least a column between entries
     start=Math.round(start/(col/2))*(col/2);
     if(x===0 && start+w>PW) start=0;                  // a fresh page always takes the cluster
     if(start+w>PW){                                     // no room: next page, or the next row
       pg++; x=0; if(pg>=pages){ pg=0; row++; }
-      start = rnd(++k)<.4 ? col*(1+Math.floor(rnd(++k)*3)) : 0;
+      start=Math.round(indent()/(col/2))*(col/2);
       if(start+w>PW) start=0;
     }
-    // sometimes a page row is left with one cluster only, as in the reference
-    let cx=pageX(pg)+start, y=row*pitch, h=rh*sc;
+    while(rowY.length<=row) rowY.push(rowY.length? rowY[rowY.length-1]+pitch+rh*(rnd(++k)*.3) : 0);
+    let cx=pageX(pg)+start, y=rowY[row], h=rh*sc;
     html+=`<div class="jset" data-j="${it.p?it.p.slug:""}" style="left:${cx}px;top:${y+(rh-h)}px;height:${h}px">`+
       it.prints.map((q,j)=>{ const pw=h*q.r, l=it.prints.slice(0,j).reduce((a,z)=>a+h*z.r+hair,0);
         return q.ph ? `<span class="jph" style="left:${l}px;width:${pw}px"></span>`
                     : `<a href="/${it.p.slug}/" data-ji="${q.i}" style="left:${l}px;width:${pw}px"><img loading="lazy" src="${q.src}" alt="${it.p?altText(it.p,q.i):esc(it.title)}"></a>`; }).join("")+
       `<span class="n">${fmtDate(it.date)}</span></div>`;
     x=start+w;
-    if(x>col*2.5 && rnd(++k)<.5){ pg++; x=0; if(pg>=pages){ pg=0; row++; } }      // sometimes a page row keeps just one cluster
+    if(x>col*2.5 && rnd(++k)<.35){ pg++; x=0; if(pg>=pages){ pg=0; row++; } }      // sometimes a page row keeps just one cluster
   });
-  const H=(row+1)*pitch;
+  const H=(rowY[row]||0)+pitch;
   const spine = "";
   swap(`<div class="cell" style="grid-column:1/13"><div class="tbox full" style="display:block"><div class="scroll" style="height:100%"><div class="jsheet" style="height:${H}px">${spine}${html}</div></div></div></div>`);
   const real=list.length, foot=it=>setFoot([["1/7",`<span class="dim">Journal</span>`],["7/13",it?`${esc(it.title)}<span class="dim">${it.p&&it.p.role?" · "+esc(it.p.role):""} · ${fmtDate(it.date)}</span>`:`<span class="dim">${real} ${real===1?"entry":"entries"}${JOURNAL_TEST?" · with 20 placeholders":""}</span>`,"right"]]);
   foot(null);
   setTimeout(()=>{ const sets=[...document.querySelectorAll(".jset")];
     sets.forEach((el,n)=>{ el.addEventListener("mouseenter",()=>foot(items[n])); });
-    document.querySelectorAll(".jset a").forEach(a=>a.addEventListener("click",()=>{ pendingImg=+a.dataset.ji; }));
+    // a journal entry always opens at its first page, whichever print was clicked
   },320);
 }
 const pad2=n=>String(n).padStart(2,"0");
@@ -544,7 +595,7 @@ $("stage").addEventListener("click", e=>{
 let swapT=null;
 function swap(html){
   const st=$("stage"); clearTimeout(swapT); document.removeEventListener("click",pvClick);
-  const go=()=>{ st.innerHTML=html; st.classList.remove("fade"); wire(); };
+  const go=()=>{ st.innerHTML=html; st.classList.remove("fade"); wire(); wakeVideos(); };
   if(st.children.length>0){ st.classList.add("fade"); swapT=setTimeout(go,260); } else go();
 }
 function wire(){
