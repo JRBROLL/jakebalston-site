@@ -12,17 +12,13 @@ const WADA = {   // exact swatches only. pale = paper, ink = text, acc = small d
   243:{pale:"#ebd3a2", ink:"#34454c", acc:"#bb7125", names:"Ivory Buff · Slate Color · Raw Sienna"},
   246:{pale:"#f5ecc2", ink:"#a84222", acc:"#a84222", names:"Sulpher Yellow · Brick Red"},
   126:{pale:"#ebd3a2", ink:"#1c4286", acc:"#1c4286", names:"Ivory Buff · Deep Lyons Blue"},
-  262:{pale:"#ebd3a2", ink:"#437742", acc:"#da525d", names:"Ivory Buff · Cossack Green · Eugenia Red"},
   214:{pale:"#ebd3a2", ink:"#4f4086", acc:"#a36752", names:"Ivory Buff · Violet · Sudan Brown"},
-  113:{pale:"#fdd4bd", ink:"#4b3317", acc:"#4b3317", names:"Seashell Pink · Vandyke Brown"},
   270:{pale:"#f5ecc2", ink:"#6b7140", acc:"#da525d", names:"Sulpher Yellow · Olive Green · Eugenia Red"},
   151:{pale:"#f5ecc2", ink:"#064f6e", acc:"#064f6e", names:"Sulpher Yellow · Vandar Poel's Blue"},
   266:{pale:"#ebd3a2", ink:"#00978d", acc:"#e31f26", names:"Ivory Buff · Benzol Green · Spectrum Red"},
   310:{pale:"#f5ecc2", ink:"#253122", acc:"#837e31", names:"Sulpher Yellow · Deep Slate Olive · Olive"},
-  207:{pale:"#b4cdc2", ink:"#111314", acc:"#a36752", names:"Glaucous Green · Black · Sudan Brown"},
   52:{pale:"#f5ecc2", ink:"#111314", acc:"#111314", names:"Sulpher Yellow · Black"},
   55:{pale:"#ffffff", ink:"#d46d7a", acc:"#d46d7a", names:"White · Old Rose"},
-  84:{pale:"#fdd4bd", ink:"#112f2c", acc:"#112f2c", names:"Seashell Pink · Deep Slate Green"},
   60:{pale:"#ffefae", ink:"#12354e", acc:"#12354e", names:"Pale Lemon Yellow · Dark Tyrian Blue"},
   104:{pale:"#f5ecc2", ink:"#a62c37", acc:"#a62c37", names:"Sulpher Yellow · Carmine Red"},
   94:{pale:"#ebd3a2", ink:"#004f46", acc:"#004f46", names:"Ivory Buff · Dusky Green"},
@@ -34,7 +30,7 @@ const WADA = {   // exact swatches only. pale = paper, ink = text, acc = small d
 
 
 // Every swatch on each plate, in the book's order, for the little colour tag at the left edge
-const PLATE_SWATCHES = {"50": ["#ebd3a2", "#4e1d4c"], "94": ["#ebd3a2", "#004f46"], "104": ["#f5ecc2", "#a62c37"], "60": ["#ffefae", "#12354e"], "84": ["#fdd4bd", "#112f2c"], "55": ["#ffffff", "#d46d7a"], "321": ["#f5ecc2", "#253122", "#97acc8", "#b59392"], "52": ["#f5ecc2", "#111314"], "207": ["#b4cdc2", "#111314", "#a36752"], "234": ["#fdc57e", "#71502f", "#a7d4e4"], "192": ["#fdbf68", "#4b3317", "#70727c"], "266": ["#e31f26", "#ebd3a2", "#8fa071", "#00978d"], "310": ["#f5ecc2", "#eeb480", "#837e31", "#253122"], "296": ["#f5ecc2", "#d8a37b", "#71502f", "#34454c"], "190": ["#ebd3a2", "#d96629", "#111314"], "243": ["#bb7125", "#ebd3a2", "#6b7140", "#34454c"], "246": ["#f8b6ba", "#a84222", "#f5ecc2", "#fdc57e"], "126": ["#ebd3a2", "#e2b540", "#1c4286"], "262": ["#da525d", "#ebd3a2", "#b09f36", "#437742"], "214": ["#ebd3a2", "#a36752", "#4f4086"], "113": ["#fdd4bd", "#4b3317"], "270": ["#da525d", "#f5ecc2", "#6b7140", "#437742"], "151": ["#f5ecc2", "#f99d1b", "#064f6e"], "343": ["#ae5224", "#ebd3a2", "#635a3a", "#064f6e"]};
+const PLATE_SWATCHES = {"50": ["#ebd3a2", "#4e1d4c"], "94": ["#ebd3a2", "#004f46"], "104": ["#f5ecc2", "#a62c37"], "60": ["#ffefae", "#12354e"], "55": ["#ffffff", "#d46d7a"], "321": ["#f5ecc2", "#253122", "#97acc8", "#b59392"], "52": ["#f5ecc2", "#111314"], "234": ["#fdc57e", "#71502f", "#a7d4e4"], "192": ["#fdbf68", "#4b3317", "#70727c"], "266": ["#e31f26", "#ebd3a2", "#8fa071", "#00978d"], "310": ["#f5ecc2", "#eeb480", "#837e31", "#253122"], "296": ["#f5ecc2", "#d8a37b", "#71502f", "#34454c"], "190": ["#ebd3a2", "#d96629", "#111314"], "243": ["#bb7125", "#ebd3a2", "#6b7140", "#34454c"], "246": ["#f8b6ba", "#a84222", "#f5ecc2", "#fdc57e"], "126": ["#ebd3a2", "#e2b540", "#1c4286"], "214": ["#ebd3a2", "#a36752", "#4f4086"], "270": ["#da525d", "#f5ecc2", "#6b7140", "#437742"], "151": ["#f5ecc2", "#f99d1b", "#064f6e"], "343": ["#ae5224", "#ebd3a2", "#635a3a", "#064f6e"]};
 const plateOf = k => (WADA[k]&&WADA[k].plate) || k;
 const SITE_COLOUR = 296;
 
@@ -118,8 +114,8 @@ function wakeVideos(){
 function preload(p,list){ list.forEach(i=>{ if(i>=0&&i<p.count){ const im=new Image(); im.src=img(p,i);} }); }
 
 /* ---------- Helpers ---------- */
-const $=id=>document.getElementById(id);
 const pad=n=>String(n).padStart(2,"0");
+const $=id=>document.getElementById(id);
 const esc=s=>String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;");
 PROJECTS.forEach(p=>{ if(LAYOUTS[p.slug]) p.layout=LAYOUTS[p.slug]; if(DROPS[p.slug]) p.drop=DROPS[p.slug]; });
 const cov=p=>(p.cover||1)-1;
@@ -141,7 +137,6 @@ function fullHalf(p,i,side,src,crop,mov){
   const cover = crop || Math.abs(Math.log(ratio(p,i)/(W/H)))<.22;   // near the shape of the half: fill it; otherwise show whole at full height
   return `<div class="cell full ${side==="L"?"bleedL":"bleedR"}" style="grid-column:${side==="L"?"1/7":"7/13"}"><img src="${src||img(p,i)}" style="object-fit:${cover?"cover":"contain"};object-position:${mov&&p.coverPos?p.coverPos:(p.coverAlign&&mov?p.coverAlign:side==="L"?"left":"right")+" center"}" alt="${altText(p,i)}">${!mov?"":vidTag(p,i,`object-fit:${cover?"cover":"contain"};object-position:${p.coverAlign||(side==="L"?"left":"right")} center`)}</div>`;
 }
-function imageCell(p,i,side){ return imgBox(p,i,half(side),0,1, side==="L"?"left center":side==="R"?"right center":"center"); }
 const textCell=(side,inner,cls="",attrs="")=>`<div class="cell ${cls}" style="grid-column:${half(side)}" ${attrs}><div class="tbox">${inner}</div></div>`;
 const _cv=document.createElement("canvas").getContext("2d");
 function fitDisplay(text, colsWide){
@@ -442,7 +437,6 @@ function renderList(section){
 /* Journal index, after the Casa Olivè catalogue spreads. Each entry is one small cluster of prints (a few picked from it,
    touching edge to edge with a hairline gap) with its date beneath. On a desktop the sheet is an open book: clusters never
    cross the spine, and each page holds one or two clusters per row at loose, uneven positions. On a phone it is one page. */
-const JOURNAL_TEST = false;        // 20 placeholder entries to judge the layout; switch off once real entries arrive
 function journalItems(list){
   // prints per entry follow the shape of the photos: narrow ones come in more, wide ones in fewer,
   // filling roughly the same width (about three squares), so the sheet has an assorted rhythm
@@ -454,14 +448,6 @@ function journalItems(list){
     for(const i of order){ const r=ratio(p,i); if(out.length && sum+r>B) break; out.push({r, src:thumb(p,i), i}); sum+=r; if(out.length>=5) break; }
     return out; };
   const items=list.map(p=>({p, date:p.date||"", title:p.title, prints:printsOf(p)}));
-  if(JOURNAL_TEST){
-    const R=[.75,.75,1,1.33,1.5,.8], rnd=k=>{ const x=Math.sin(k*12.9898+3.1)*43758.5453; return x-Math.floor(x); };
-    for(let e=0;e<20;e++){
-      const d=new Date(2026,8-e,28-((e*7)%23)), n=1+Math.floor(rnd(e+1)*3.2);
-      items.push({p:null, title:`Placeholder entry ${e+1}`, date:d.toISOString().slice(0,10),
-        prints:Array.from({length:n},(_,j)=>({r:R[Math.floor(rnd(e*5+j+9)*R.length)], ph:true}))});
-    }
-  }
   return items.sort((a,b)=>b.date.localeCompare(a.date));
 }
 const fmtDate=d=>d? d.slice(5,7)+" "+d.slice(2,4) : "";      // month and year: "09 26"
@@ -505,14 +491,13 @@ function renderJournal(list, book){
   const H=(rowY[row]||0)+pitch;
   const spine = "";
   swap(`<div class="cell" style="grid-column:1/13"><div class="tbox full" style="display:block"><div class="scroll" style="height:100%"><div class="jsheet" style="height:${H}px">${spine}${html}</div></div></div></div>`);
-  const real=list.length, foot=it=>setFoot([["1/7",`<span class="dim">Journal</span>`],["7/13",it?`${esc(it.title)}<span class="dim">${it.p&&it.p.role?" · "+esc(it.p.role):""} · ${fmtDate(it.date)}</span>`:`<span class="dim">${real} ${real===1?"entry":"entries"}${JOURNAL_TEST?" · with 20 placeholders":""}</span>`,"right"]]);
+  const real=list.length, foot=it=>setFoot([["1/7",`<span class="dim">Journal</span>`],["7/13",it?`${esc(it.title)}<span class="dim">${it.p&&it.p.role?" · "+esc(it.p.role):""} · ${fmtDate(it.date)}</span>`:`<span class="dim">${real} ${real===1?"entry":"entries"}</span>`,"right"]]);
   foot(null);
   setTimeout(()=>{ const sets=[...document.querySelectorAll(".jset")];
     sets.forEach((el,n)=>{ el.addEventListener("mouseenter",()=>foot(items[n])); });
     // a journal entry always opens at its first page, whichever print was clicked
   },320);
 }
-const pad2=n=>String(n).padStart(2,"0");
 /* Commissions footer: follows the hovered project, showing its place in the list and its recognition if it has one */
 function listFoot(list,q){
   const n=list.indexOf(q)+1;
