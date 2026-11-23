@@ -25,7 +25,7 @@
   button{font:inherit;color:inherit;background:none;border:0;cursor:pointer;letter-spacing:inherit;text-transform:inherit;text-align:inherit}
   html.cs1 .world{filter:grayscale(1)}
   .world{position:fixed;inset:0;height:100dvh;background:var(--ground);color:var(--ink);transition:filter .7s ease,background-color .9s ease,color .9s ease}
-  .lab,.ph,.dim,.tbl a,.inv .k,.inv .v span{transition:color .9s ease}
+  .lab,.dim,.tbl a,.inv .k,.inv .v span{transition:color .9s ease}
 
   /* ---------- One 12-column grid for everything ---------- */
   .g12{position:absolute;left:0;right:0;padding:0 var(--pad);display:grid;grid-template-columns:repeat(12,minmax(0,1fr));column-gap:var(--gut)}
@@ -44,10 +44,9 @@
   .head nav a{display:block;opacity:.5}
   .head nav a:hover,.foot a:hover,.foot button:hover{opacity:1}
   .head nav a.on{opacity:1;color:inherit;text-decoration:underline;text-underline-offset:3px}
-  #swtag{position:fixed;left:0;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;z-index:6;pointer-events:auto}
+  #swtag{position:fixed;left:0;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;z-index:6;pointer-events:auto;transition:opacity .7s ease}
   #swtag i{display:block;width:18px;height:18px}
   body.single #swtag i{width:12px;height:12px}
-  #swtag{transition:opacity .7s ease}
   .world.quiet:not(.peek) #swtag{opacity:.4}
   .name{font-size:15px;letter-spacing:.04em}
   /* The colour switch: a half-filled circle that turns a half-turn with every click */
@@ -61,42 +60,29 @@
   .cell{grid-row:1;position:relative;min-width:0}
   .tbox{position:absolute;left:0;right:0;top:var(--top);bottom:var(--bot);display:grid;grid-template-columns:repeat(6,minmax(0,1fr));column-gap:var(--gut);grid-template-rows:auto minmax(0,1fr) auto;align-content:stretch}
   .tbox.full{grid-template-columns:repeat(12,minmax(0,1fr))}
-  .ib{position:absolute;left:0;right:0}
   .cell.full img{position:absolute;inset:0;width:100%;height:100%;display:block}
-  .ib img{width:100%;height:100%;object-fit:contain;display:block;user-select:none;-webkit-user-drag:none}
   figure.ph{position:absolute;margin:0}
   video.mv{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;opacity:0;transition:opacity 1.2s ease;pointer-events:none}
   video.mv.on{opacity:1}
   figure.ph img{display:block;width:100%;height:auto;user-select:none;-webkit-user-drag:none}
-  
-  
-  
+  /* Photos stay hidden until fully downloaded and decoded, then fade in (see reveal() in site.js) */
+  img.wait{opacity:0;transition:opacity .3s ease}
+  img.wait.in{opacity:1}
+
   .stepq{position:absolute;font-family:var(--serif);font-weight:300;font-size:clamp(16px,1.35vw,20px);line-height:1.5}
   .stepq span{display:block}
   .stepq .by{font-family:var(--sans);font-size:11px;margin-top:10px}
-  
-  
-  
-  
+
   .bleedL{margin-left:calc(var(--pad)*-1)}
   .bleedR{margin-right:calc(var(--pad)*-1)}
-  .click{cursor:pointer}
-  
-  
-  
 
   .lab{color:var(--muted)}
-  .row{display:grid;grid-template-columns:subgrid}
   .display{font-family:var(--serif);font-weight:300;line-height:.98;letter-spacing:-.02em}
-  .serif{font-family:var(--serif);font-weight:300}
-  .ph{color:var(--muted)}
-  
-  .step span{display:block}
   .scroll{overflow-y:auto;overscroll-behavior:contain;scrollbar-width:none;min-height:0}
   .scroll::-webkit-scrollbar{display:none}
 
   /* Project list, set like a table */
-  .tbl a,.tbl .th{display:grid;grid-template-columns:3fr 2fr 1.4fr .5fr;column-gap:var(--gut);padding:4px 0}
+  .tbl a,.tbl .th{display:grid;grid-template-columns:minmax(0,3fr) minmax(0,2fr) minmax(0,1.4fr) 5em;column-gap:var(--gut);padding:4px 0}
   .tbl .th{border-top:1px solid var(--ink);padding-top:6px;margin-bottom:22px}
   .tbl a{color:var(--muted);transition:color .2s}
   .tbl a:hover,.tbl a.on{color:var(--ink)}
@@ -119,40 +105,27 @@
   .ix img{max-width:100%;max-height:100%;display:block}
   .ix button:hover img{opacity:.7}
 
-
-  .proto{position:fixed;left:50%;bottom:3px;transform:translateX(-50%);font-size:9.5px;color:var(--muted);opacity:.7;pointer-events:none;z-index:6}
-
   /* ---------- Phone: one column of pages ---------- */
   body.single{--top:78px;--bot:58px}
-  /* Phone: one photo per screen, edge to edge; the architects' words get a screen of their own */
   body.single #swtag{display:none}
   /* Journal: a loose contact sheet, after the Casa Olivè catalogue index */
   .jsheet{position:relative}
-  .jsheet a,.jsheet .jph{position:absolute;top:0;bottom:0;display:block}
+  .jsheet a{position:absolute;top:0;bottom:0;display:block}
   .jset{position:absolute}
-  .jph{background:var(--hair)}
-  
   .jsheet img{display:block;width:100%;height:100%;object-fit:cover;transition:opacity .3s}
-  @media (hover:hover){ .jsheet:hover .jset{opacity:.5} .jsheet .jset:hover{opacity:1} } .jset{transition:opacity .3s}
+  .jset{transition:opacity .3s}
+  @media (hover:hover){ .jsheet:hover .jset{opacity:.5} .jsheet .jset:hover{opacity:1} }
   .jsheet .n{position:absolute;left:0;top:100%;margin-top:7px;font-family:var(--serif);font-size:13px;white-space:nowrap}
-  .jsheet .n i{font-style:normal;font-family:var(--sans);font-size:11px;margin-left:10px}
-  
-  
+
   .pwords{position:absolute;left:8%;right:4%;top:50%;transform:translateY(-50%);font-family:var(--serif);font-weight:300;font-size:22px;line-height:1.5}
   .pwords span{display:block}.pwords .by{font-family:var(--sans);font-size:11px;margin-top:14px}
-  
-  
-  
-  
-  
-  
+
   body.single .head{grid-template-rows:auto;align-items:baseline}
   body.single .head nav{display:flex;gap:16px}
   body.single .head nav a{display:inline}
   body.single .tbox{grid-template-columns:repeat(6,minmax(0,1fr))}
-  body.single .tbl a,body.single .tbl .th{grid-template-columns:3fr 2fr}
   body.single .tbl .c3{display:none}
-  body.single .tbl a,body.single .tbl .th{grid-template-columns:3fr 2fr .6fr}
+  body.single .tbl a,body.single .tbl .th{grid-template-columns:minmax(0,3fr) minmax(0,2fr) 5em}
   body.single .inv .k{grid-column:1/7;text-align:left}
   body.single .inv .v{grid-column:1/7}
   body.single .inv{row-gap:10px}

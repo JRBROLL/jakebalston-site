@@ -17,7 +17,7 @@ def og(slug, idx):
     W, H = 1200, 630; r = max(W/im.width, H/im.height)
     im = im.resize((round(im.width*r), round(im.height*r)), Image.LANCZOS)
     l, t = (im.width-W)//2, (im.height-H)//2
-    im.crop((l, t, l+W, t+H)).save(f"{OUT}/og/{slug}.jpg", "JPEG", quality=82, optimize=True, progressive=True)
+    im.crop((l, t, l+W, t+H)).save(f"{OUT}/og/{slug}.jpg", "JPEG", quality=90, optimize=True, progressive=True)
 PERSON = {"@type": "Person", "@id": DOMAIN + "/#jake", "name": "Jake Balston", "jobTitle": "Architectural photographer",
           "url": DOMAIN + "/", "email": "mailto:info@jakebalston.com", "telephone": "+44 7791 760474",
           "address": {"@type": "PostalAddress", "addressCountry": "GB"},
@@ -82,9 +82,9 @@ for p in P:
     desc = clip(p.get("text") or f'{p["title"]}{" by " + who if who else ""}, {p.get("place","")}. Photographed by Jake Balston.')
     n = len([i for i in range(p["count"]) if (i+1) not in (C["DROPS"].get(slug) or [])])
     quotes = "".join(f'<blockquote>{e(q["q"])} <cite>{e(q["by"])}</cite></blockquote>' for q in p.get("quotes") or [])
-    alts = "".join(f'<li><img src="/img/{slug}-{i+1:02d}-t.webp" alt="{e(ALT(slug,i,p,who))}" loading="lazy" width="{round(520*C["DIMS"][slug][i][0]/max(C["DIMS"][slug][i]))}" height="{round(520*C["DIMS"][slug][i][1]/max(C["DIMS"][slug][i]))}"></li>'
+    alts = "".join(f'<li><img src="/img/{slug}-{i+1:02d}-t.webp" alt="{e(ALT(slug,i,p,who))}" loading="lazy" width="{round(800*C["DIMS"][slug][i][0]/max(C["DIMS"][slug][i]))}" height="{round(800*C["DIMS"][slug][i][1]/max(C["DIMS"][slug][i]))}"></li>'
                    for i in range(p["count"]) if (i+1) not in (C["DROPS"].get(slug) or []))
-    facts = "".join(f"<dt>{k}</dt><dd>{e(v)}</dd>" for k, v in [(p.get("archLabel") or "Architect", who), *[(c[0], c[1]) for c in p.get("credits") or []], ("Client", p.get("client")), ("With", p.get("with")), ("Location", p.get("place")), ("Year", p.get("year")), ("Recognition", p.get("note"))] if v)
+    facts = "".join(f"<dt>{k}</dt><dd>{e(v)}</dd>" for k, v in [(p.get("archLabel") or "Architect", who), *[(c[0], c[1]) for c in p.get("credits") or []], ("With", p.get("with")), ("Location", p.get("place")), ("Year", p.get("year")), ("Recognition", p.get("note"))] if v)
     body = f'<h1>{e(p["title"])}</h1>{NAV}<dl>{facts}</dl><p>{e(p.get("text",""))}</p>{quotes}<p>{n} photographs by Jake Balston.</p><ul>{alts}</ul>'
     work = {"@type": "ImageGallery" if not J else "CreativeWork", "url": f"{DOMAIN}/{slug}/", "name": p["title"],
             "description": desc, "author": {"@id": DOMAIN + "/#jake"}, "image": f"{DOMAIN}/og/{slug}.jpg",

@@ -8,7 +8,6 @@ const WADA = {   // exact swatches only. pale = paper, ink = text, acc = small d
   "296b":{pale:"#f5ecc2", ink:"#71502f", acc:"#34454c", names:"Sulpher Yellow · Pale Raw Umber · Slate Color", plate:296},
   190:{pale:"#ebd3a2", ink:"#111314", acc:"#d96629", names:"Ivory Buff · Black · English Red"},
   234:{pale:"#fdc57e", ink:"#71502f", acc:"#71502f", names:"Cinnamon Buff · Pale Raw Umber · Pale King's Blue"},
-  192:{pale:"#fdbf68", ink:"#4b3317", acc:"#70727c", names:"Cream Yellow · Vandyke Brown · Deep Violet / Plumbeous"},
   243:{pale:"#ebd3a2", ink:"#34454c", acc:"#bb7125", names:"Ivory Buff · Slate Color · Raw Sienna"},
   246:{pale:"#f5ecc2", ink:"#a84222", acc:"#a84222", names:"Sulpher Yellow · Brick Red"},
   126:{pale:"#ebd3a2", ink:"#1c4286", acc:"#1c4286", names:"Ivory Buff · Deep Lyons Blue"},
@@ -18,7 +17,6 @@ const WADA = {   // exact swatches only. pale = paper, ink = text, acc = small d
   266:{pale:"#ebd3a2", ink:"#00978d", acc:"#e31f26", names:"Ivory Buff · Benzol Green · Spectrum Red"},
   310:{pale:"#f5ecc2", ink:"#253122", acc:"#837e31", names:"Sulpher Yellow · Deep Slate Olive · Olive"},
   52:{pale:"#f5ecc2", ink:"#111314", acc:"#111314", names:"Sulpher Yellow · Black"},
-  55:{pale:"#ffffff", ink:"#d46d7a", acc:"#d46d7a", names:"White · Old Rose"},
   60:{pale:"#ffefae", ink:"#12354e", acc:"#12354e", names:"Pale Lemon Yellow · Dark Tyrian Blue"},
   104:{pale:"#f5ecc2", ink:"#a62c37", acc:"#a62c37", names:"Sulpher Yellow · Carmine Red"},
   94:{pale:"#ebd3a2", ink:"#004f46", acc:"#004f46", names:"Ivory Buff · Dusky Green"},
@@ -26,11 +24,8 @@ const WADA = {   // exact swatches only. pale = paper, ink = text, acc = small d
   321:{pale:"#f5ecc2", ink:"#253122", acc:"#97acc8", names:"Sulpher Yellow · Deep Slate Olive · Salvia Blue · Light Brown Drab"},
   343:{pale:"#ebd3a2", ink:"#ae5224", acc:"#064f6e", names:"Ivory Buff · Burnt Sienna · Vandar Poel's Blue"},
 };
-// Hand-set running orders: [spread, image numbers…]. Images left out are dropped from the project.
-
-
 // Every swatch on each plate, in the book's order, for the little colour tag at the left edge
-const PLATE_SWATCHES = {"50": ["#ebd3a2", "#4e1d4c"], "94": ["#ebd3a2", "#004f46"], "104": ["#f5ecc2", "#a62c37"], "60": ["#ffefae", "#12354e"], "55": ["#ffffff", "#d46d7a"], "321": ["#f5ecc2", "#253122", "#97acc8", "#b59392"], "52": ["#f5ecc2", "#111314"], "234": ["#fdc57e", "#71502f", "#a7d4e4"], "192": ["#fdbf68", "#4b3317", "#70727c"], "266": ["#e31f26", "#ebd3a2", "#8fa071", "#00978d"], "310": ["#f5ecc2", "#eeb480", "#837e31", "#253122"], "296": ["#f5ecc2", "#d8a37b", "#71502f", "#34454c"], "190": ["#ebd3a2", "#d96629", "#111314"], "243": ["#bb7125", "#ebd3a2", "#6b7140", "#34454c"], "246": ["#f8b6ba", "#a84222", "#f5ecc2", "#fdc57e"], "126": ["#ebd3a2", "#e2b540", "#1c4286"], "214": ["#ebd3a2", "#a36752", "#4f4086"], "270": ["#da525d", "#f5ecc2", "#6b7140", "#437742"], "151": ["#f5ecc2", "#f99d1b", "#064f6e"], "343": ["#ae5224", "#ebd3a2", "#635a3a", "#064f6e"]};
+const PLATE_SWATCHES = {"50": ["#ebd3a2", "#4e1d4c"], "94": ["#ebd3a2", "#004f46"], "104": ["#f5ecc2", "#a62c37"], "60": ["#ffefae", "#12354e"], "321": ["#f5ecc2", "#253122", "#97acc8", "#b59392"], "52": ["#f5ecc2", "#111314"], "234": ["#fdc57e", "#71502f", "#a7d4e4"], "266": ["#e31f26", "#ebd3a2", "#8fa071", "#00978d"], "310": ["#f5ecc2", "#eeb480", "#837e31", "#253122"], "296": ["#f5ecc2", "#d8a37b", "#71502f", "#34454c"], "190": ["#ebd3a2", "#d96629", "#111314"], "243": ["#bb7125", "#ebd3a2", "#6b7140", "#34454c"], "246": ["#f8b6ba", "#a84222", "#f5ecc2", "#fdc57e"], "126": ["#ebd3a2", "#e2b540", "#1c4286"], "214": ["#ebd3a2", "#a36752", "#4f4086"], "270": ["#da525d", "#f5ecc2", "#6b7140", "#437742"], "151": ["#f5ecc2", "#f99d1b", "#064f6e"], "343": ["#ae5224", "#ebd3a2", "#635a3a", "#064f6e"]};
 const plateOf = k => (WADA[k]&&WADA[k].plate) || k;
 const SITE_COLOUR = 296;
 
@@ -78,21 +73,19 @@ function cycleColour(){
   try{ localStorage.setItem("jb-colour", String(colourState)); }catch(e){}
   applyColour(); const b=$("monoBtn"); if(b){ b.title=COLOUR_TITLES[colourState]; b.setAttribute("aria-label",COLOUR_TITLES[colourState]); }
 }
-// Home: every photograph on the site, shuffled each visit (each opens its project at that image)
+// Home: every commissions photograph, shuffled each visit (each opens its project at the first page)
 let HOME_ALL = null;
 function homeAll(){ const a=[]; PROJECTS.filter(p=>p.section==="commissions").forEach(p=>{ shown(p).forEach(i=>a.push([p,i])); });
   for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
-const HOME_ROTATION = ["osprey-house","hampstead-house","chatham","deyne-avenue","th-house"];
 
-
-
-
-
-/* ---------- Images (temporary: taken from the current Squarespace site) ---------- */
+/* ---------- Images ----------
+   <slug>-NN.webp is the full photograph, -m.webp a 1600px copy (the phone home page), -t.webp an 800px thumbnail.
+   IMG_V goes on every address: change it whenever the photographs are replaced, so browsers fetch the new ones. */
+const IMG_V="?v=2611";
 
 function ratio(p,i){ const d=DIMS[p.slug][i]; return d[0]/d[1]; }
-function img(p,i){ return `/img/${p.slug}-${String(i+1).padStart(2,"0")}.webp`; }
-function thumb(p,i){ return `/img/${p.slug}-${String(i+1).padStart(2,"0")}-t.webp`; }
+const imgFile=(p,i,suf="")=>`/img/${p.slug}-${String(i+1).padStart(2,"0")}${suf}.webp${IMG_V}`;
+const img=(p,i)=>imgFile(p,i), mid=(p,i)=>imgFile(p,i,"-m"), thumb=(p,i)=>imgFile(p,i,"-t");
 /* Moving photographs: the still is the poster and stays in place; the clip loads only when it is on screen and fades in over it */
 const hasVid=(p,i)=>typeof VIDS!=="undefined" && (VIDS[p.slug]||[]).includes(i+1);
 const vidSrc=(p,i)=>`/vid/${p.slug}-${String(i+1).padStart(2,"0")}.mp4`;
@@ -111,7 +104,37 @@ function wakeVideos(){
   }),{threshold:.25});
   vs.forEach(v=>vidObs.observe(v));
 }
-function preload(p,list){ list.forEach(i=>{ if(i>=0&&i<p.count){ const im=new Image(); im.src=img(p,i);} }); }
+/* A photo appears only once it has fully arrived and been decoded, so it is never seen half-drawn;
+   until then its place shows the paper, and it fades in. Photos the browser already has appear at once. */
+function reveal(root){
+  root.querySelectorAll("img").forEach(im=>{
+    if(im.complete && im.naturalWidth) return im.classList.add("in");
+    im.classList.add("wait");
+    im.addEventListener("load",()=>im.decode().catch(()=>{}).then(()=>im.classList.add("in")),{once:true});
+  });
+}
+/* Change a photo already on screen only once the new one is ready (the last one asked for wins) */
+function swapSrc(im,src){
+  im.dataset.want=src; const nx=new Image(); nx.src=src;
+  return nx.decode().then(()=>{ if(im.dataset.want===src) im.src=src; }).catch(()=>{});
+}
+/* Fetching photos ahead of time: queued ones come one at a time at low priority, so they never slow what is on screen;
+   urgent ones (a hovered project) start straight away. */
+const warmed=new Set(), warmQ=[]; let warming=false;
+function fetchImg(src,urgent){
+  if(warmed.has(src)) return;
+  if(urgent){ const q=warmQ.indexOf(src); if(q>=0) warmQ.splice(q,1); warmed.add(src); const im=new Image(); im.fetchPriority="high"; im.src=src; return; }
+  if(!warmQ.includes(src)) warmQ.push(src); pump();
+}
+function pump(){
+  if(warming) return; const src=warmQ.shift(); if(!src) return; if(warmed.has(src)) return pump();
+  warmed.add(src); warming=true;
+  const im=new Image(); im.fetchPriority="low"; im.onload=im.onerror=()=>{ warming=false; pump(); }; im.src=src;
+}
+const openingImgs=p=>(spreads(p).find(s=>s.imgs.length)||{imgs:[]}).imgs;   // the photo(s) a project opens on
+const warmProject=(p,urgent)=>openingImgs(p).forEach(i=>fetchImg(img(p,i),urgent));
+// Fetching ahead in the background only with a mouse and a decent connection: never on phones, slow networks or data saver
+const slowNet=()=>{ const c=navigator.connection; return !!c && (c.saveData || /2g|3g/.test(c.effectiveType||"")); };
 
 /* ---------- Helpers ---------- */
 const pad=n=>String(n).padStart(2,"0");
@@ -122,22 +145,16 @@ const cov=p=>(p.cover||1)-1;
 const shown=p=>Array.from({length:p.count},(_,i)=>i).filter(i=>!(p.drop||[]).includes(i+1));
 const bySlug=Object.fromEntries(PROJECTS.map(p=>[p.slug,p]));
 const isBook=()=>innerWidth>=900 && innerWidth>innerHeight*1.05;
-const known=a=>a && !/confirm/.test(a);
 let state={route:"home", project:null, page:0, mode:"pages", hover:null};
 
 const half=side=>!isBook()? "1/13" : side==="L" ? "1/7" : side==="R" ? "7/13" : "1/13";
-/* Images are never cropped and never run under the header or footer:
-   each sits whole inside a box on the grid, within the band between them. */
-const band=(t,h)=>`top:calc(var(--top) + (100% - var(--top) - var(--bot)) * ${t});height:calc((100% - var(--top) - var(--bot)) * ${h})`;
-function imgBox(p,i,cols,t=0,h=1,pos="center"){
-  return `<div class="cell" style="grid-column:${cols}"><div class="ib" style="${band(t,h)}"><img src="${img(p,i)}" style="object-position:${pos}" alt="${altText(p,i)}"></div></div>`;
+/* The opening photograph fills its half of the screen, bleeding off the outer edge. On a project's own opening page
+   it can be positioned by hand (coverPos, or coverAlign for the side) and carries a moving version if there is one. */
+function fullHalf(p,i,side,opener){
+  const pos = opener && p.coverPos ? p.coverPos : ((opener && p.coverAlign) || (side==="L"?"left":"right"))+" center";
+  return `<div class="cell full ${side==="L"?"bleedL":"bleedR"}" style="grid-column:${side==="L"?"1/7":"7/13"}"><img src="${img(p,i)}" style="object-fit:cover;object-position:${pos}" alt="${altText(p,i)}">${opener?vidTag(p,i,`object-fit:cover;object-position:${pos}`):""}</div>`;
 }
-function fullHalf(p,i,side,src,crop,mov){
-  const W=innerWidth/2+parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--pad")||20), H=innerHeight;
-  const cover = crop || Math.abs(Math.log(ratio(p,i)/(W/H)))<.22;   // near the shape of the half: fill it; otherwise show whole at full height
-  return `<div class="cell full ${side==="L"?"bleedL":"bleedR"}" style="grid-column:${side==="L"?"1/7":"7/13"}"><img src="${src||img(p,i)}" style="object-fit:${cover?"cover":"contain"};object-position:${mov&&p.coverPos?p.coverPos:(p.coverAlign&&mov?p.coverAlign:side==="L"?"left":"right")+" center"}" alt="${altText(p,i)}">${!mov?"":vidTag(p,i,`object-fit:${cover?"cover":"contain"};object-position:${p.coverAlign||(side==="L"?"left":"right")} center`)}</div>`;
-}
-const textCell=(side,inner,cls="",attrs="")=>`<div class="cell ${cls}" style="grid-column:${half(side)}" ${attrs}><div class="tbox">${inner}</div></div>`;
+const textCell=(side,inner)=>`<div class="cell" style="grid-column:${half(side)}"><div class="tbox">${inner}</div></div>`;
 const _cv=document.createElement("canvas").getContext("2d");
 function fitDisplay(text, colsWide){
   const padPx=parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--pad"))||20;
@@ -190,7 +207,7 @@ const SPREADS = {
 /* Rules: photos never carry captions; words only appear on single-photo spreads (F or H), stepped, with the architect's name beneath;
    no three-photo spreads; two-photo spreads always give one photo real size. */
 const ORDER = ["B","G","C","F","D","A","H"];
-const isLand=(p,i)=>ratio(p,i)>1.15, isPort=(p,i)=>ratio(p,i)<.95;
+const isLand=(p,i)=>ratio(p,i)>1.15;
 function spreadsBook(p){
   const keep=i=>!(p.drop||[]).includes(i+1);
   let s=[{type:"open", imgs:[cov(p)]}];
@@ -201,11 +218,10 @@ function spreadsBook(p){
     s.push({type:"book", key:isLand(p,0)?"G":"F", imgs:[0]});
     let j=1, k=0;
     while(j<list.length){
-      let key=ORDER[k++%ORDER.length]; const a=list[j], b=list[j+1], left=list.length-j;
+      let key=ORDER[k++%ORDER.length]; const a=list[j], left=list.length-j;
       if(key==="G" && !isLand(p,a)) key="F";
-      if(key==="P" && !(left>=2 && isPort(p,a) && isPort(p,b))) key="C";
-      if(["B","D","C","P"].includes(key) && left<2) key = isLand(p,a)?"G":"H";
-      const n = SPREADS[key].pair || SPREADS[key].slots.length===2 ? 2 : 1;
+      if(["B","D","C"].includes(key) && left<2) key = isLand(p,a)?"G":"H";
+      const n = SPREADS[key].slots.length;
       s.push({type:"book", key, imgs:list.slice(j,j+n)}); j+=n;
     }
   }
@@ -248,7 +264,7 @@ function spreadsSingle(p){
 }
 function phonePage(p,sp){
   const css=getComputedStyle(document.body), top=parseFloat(css.getPropertyValue("--top"))||78, bot=parseFloat(css.getPropertyValue("--bot"))||58;
-  const L=innerWidth*.05, W=innerWidth*.9, T=top+8, H=innerHeight-top-bot-16, two=sp.imgs.length===2;
+  const L=innerWidth*.05, W=innerWidth*.9, T=top+8, H=innerHeight-top-bot-16;
   return sp.imgs.map((i,j)=>{
     const pos=(sp.pos||[PP.full])[j], r=ratio(p,i);
     const w=Math.min(W*pos.w, H*pos.h*r), h=w/r;
@@ -277,7 +293,7 @@ function geo(){
 }
 /* Photo descriptions from content.js (ALTS); falls back to project, architect and number */
 function altPlain(p,i){ const d=(typeof ALTS!=="undefined" && ALTS[p.slug]) ? ALTS[p.slug][String(i+1)] : "";
-  return d || `${p.title}${known(p.architect)?", "+p.architect:""}, photograph ${i+1} by Jake Balston`; }
+  return d || `${p.title}${p.architect?", "+p.architect:""}, photograph ${i+1} by Jake Balston`; }
 function altText(p,i){ return esc(altPlain(p,i)); }
 function figure(p,i,left,top,w){
   return `<figure class="ph" style="left:${left}px;top:${top}px;width:${w}px"><img src="${img(p,i)}" width="${Math.round(w)}" height="${Math.round(w/ratio(p,i))}" alt="${altText(p,i)}">${vidTag(p,i)}</figure>`;
@@ -328,8 +344,8 @@ function bookSpread(p,sp){
 
 function openerInner(p){
   const t=fitDisplay(p.title, isBook()?6:12);
-  const wk=PROJECT_COLOUR[p.slug], w=WADA[wk]||{};
-  const facts=[[p.archLabel||"Architect",p.architect],...(p.credits||[]),["Client",p.client],["With",p.with],["Location",p.place],["Year",p.year],["Recognition",p.note],["Colour",`Wada ${plateOf(wk)}`]].filter(([,v])=>v)
+  const wk=PROJECT_COLOUR[p.slug];
+  const facts=[[p.archLabel||"Architect",p.architect],...(p.credits||[]),["With",p.with],["Location",p.place],["Year",p.year],["Recognition",p.note],["Colour",`Wada ${plateOf(wk)}`]].filter(([,v])=>v)
     .map(([k,v,u])=>{
       // The architect's name links to their practice (opens in a new tab); project pages are never linked
       const val = u ? `<a class="ext" href="${u}" target="_blank" rel="noopener">${esc(v)}</a>` : k===(p.archLabel||"Architect") && p.site ? `<a class="ext" href="${p.site}" target="_blank" rel="noopener">${esc(v)}</a>` : k==="Colour" ? v : esc(v);
@@ -346,13 +362,14 @@ function renderProject(){
   let html="";
   if(state.mode==="index"){
     html=`<div class="cell" style="grid-column:1/13"><div class="tbox full" style="display:block"><div class="scroll" style="height:100%"><div class="ix">${shown(p).map(i=>`<button data-img="${i}"><img loading="lazy" src="${thumb(p,i)}" alt="${altText(p,i)}"></button>`).join("")}</div></div></div></div>`;
-  } else if(sp.type==="open") html=textCell("L",openerInner(p))+(book?fullHalf(p,cov(p),"R",null,true,true):imgBox(p,cov(p),"7/13",0,1,"right center"));
+  } else if(sp.type==="open") html=textCell("L",openerInner(p))+fullHalf(p,cov(p),"R",true);
   else if(sp.type==="book") html=bookSpread(p,sp);
   else if(sp.type==="opentext") html=textCell("X",openerInner(p));
   else if(sp.type==="phone") html=phonePage(p,sp);
   else if(sp.type==="words") html=phoneWords(sp.quote);
   swap(html);
-  [S[state.page+1],S[state.page-1]].forEach(x=>x&&preload(p,x.imgs));
+  warmQ.length=0;   // anything still queued from elsewhere gives way to this project
+  [1,2,-1].map(d=>S[(state.page+d+S.length)%S.length]).forEach(x=>x.imgs.forEach(i=>fetchImg(img(p,i))));
 
   const nums=sp.imgs.length? sp.imgs.map(i=>pad(dispNo(p,i))).join("–") : "00";
   // artwork in the photos on screen: title and artist (linked to their site) beside the counter
@@ -377,56 +394,62 @@ function dispNo(p,i){
 function nextProject(p){ const same=PROJECTS.filter(x=>x.section===p.section); return same[(same.indexOf(p)+1)%same.length]; }
 
 /* ---------- Home: a small image in a lot of space ---------- */
-let homeTimer=null, homeK=0;
+let homeTimer=null, homeK=0, homeCur=null, homeWarm=null, homeWarmed=0;
+/* Once a home photo has been on screen for two seconds, its project's opening page is fetched in the background
+   (up to four projects a visit, mouse and decent connection only); hovering the photo fetches it straight away */
+function homeShown(p){
+  clearTimeout(homeWarm); if(!canHover || slowNet() || homeWarmed>=4) return;
+  homeWarm=setTimeout(()=>{ if(state.route==="home"){ homeWarmed++; warmProject(p); } },2000);
+}
 function renderHome(){
   swatchTag(null); document.body.classList.add("home");
   document.title="Jake Balston · Architectural photographer, UK";
   renderHead(null); setWada(SITE_COLOUR); quietOff();
   if(!HOME_ALL) HOME_ALL=homeAll();
   const [p,pi]=HOME_ALL[homeK%HOME_ALL.length], book=isBook();
+  const homeSrc=(q,qi)=>isBook()?thumb(q,qi):mid(q,qi);
+  const photo=`<img src="${homeSrc(p,pi)}" alt="${altText(p,pi)}" style="width:100%;height:100%;object-fit:contain;object-position:center;transition:opacity .6s">`;
   if(!book){
     swap(`<div class="cell" style="grid-column:1/13">
-      <a id="homeImg" href="/${p.slug}/" data-img="${pi}" style="position:absolute;left:8%;right:8%;top:22%;height:50%;display:block">
-        <img src="${img(p,pi)}" alt="${altText(p,pi)}" style="width:100%;height:100%;object-fit:contain;object-position:center;transition:opacity .6s"></a></div>`);
+      <a id="homeImg" href="/${p.slug}/" style="position:absolute;left:8%;right:8%;top:22%;height:50%;display:block">${photo}</a></div>`);
     setFoot([["1/13",`<div style="text-align:center">Architecture and interiors, photographed<br>for architects, designers and publishers.</div>`]]);
   } else swap(`<div class="cell" style="grid-column:1/13">
-      <div style="position:absolute;left:0;${book?"top:50%;transform:translateY(-50%)":"top:var(--top)"};text-transform:uppercase;letter-spacing:.08em">Architectural photography</div>
-      ${book?`<div style="position:absolute;right:0;top:50%;transform:translateY(-50%);text-transform:uppercase;letter-spacing:.08em;text-align:right">Working worldwide</div>`:""}
+      <div style="position:absolute;left:0;top:50%;transform:translateY(-50%);text-transform:uppercase;letter-spacing:.08em">Architectural photography</div>
+      <div style="position:absolute;right:0;top:50%;transform:translateY(-50%);text-transform:uppercase;letter-spacing:.08em;text-align:right">Working worldwide</div>
     </div>
-    <div class="cell" style="grid-column:${book?"6/8":"4/10"}">
-      <a id="homeImg" href="/${p.slug}/" data-img="${pi}" style="position:absolute;left:0;right:0;top:${book?"31%":"30%"};height:${book?"38%":"34%"};display:block">
-        <img src="${thumb(p,pi)}" alt="${altText(p,pi)}" style="width:100%;height:100%;object-fit:contain;object-position:center;transition:opacity .6s"></a>
+    <div class="cell" style="grid-column:6/8">
+      <a id="homeImg" href="/${p.slug}/" style="position:absolute;left:0;right:0;top:31%;height:38%;display:block">${photo}</a>
     </div>`);
+  homeCur=p;
   if(book) setFoot([["1/2","JB"],["2/3","2026"],["5/9",`<div style="text-align:center">Architecture and interiors, photographed<br>for architects, designers and publishers.</div>`],["11/13",`${PROJECTS.filter(p=>p.section==="commissions").length} projects`,"right"]]);
   clearInterval(homeTimer);
   homeTimer=setInterval(()=>{
     if(state.route!=="home") return clearInterval(homeTimer);
     homeK++; const [q,qi]=HOME_ALL[homeK%HOME_ALL.length], a=$("homeImg"); if(!a) return;
-    const im=a.querySelector("img"); im.style.opacity=0;
-    const nx=new Image(); nx.onload=()=>{ im.src=nx.src; im.alt=altPlain(q,qi); a.href="/"+q.slug+"/"; a.dataset.img=qi; im.style.opacity=1; }; setTimeout(()=>{ nx.src=isBook()?thumb(q,qi):img(q,qi); },600);
+    const im=a.querySelector("img"), nx=new Image(); nx.src=homeSrc(q,qi);
+    im.style.opacity=0;
+    Promise.all([nx.decode().catch(()=>{}), new Promise(r=>setTimeout(r,600))]).then(()=>{
+      if(state.route!=="home") return;
+      im.src=nx.src; im.alt=altPlain(q,qi); a.href="/"+q.slug+"/"; homeCur=q; im.style.opacity=1; homeShown(q); });
   },4500);
 }
 
-/* ---------- Commissions / Personal: a table, with the cover alongside ---------- */
+/* ---------- Commissions: a table, with the cover alongside ---------- */
 function renderList(section){
   swatchTag(null);
   document.title = section==="journal" ? "Journal · Jake Balston" : "Commissions · Jake Balston, architectural photographer";
   renderHead(section, section==="journal"?null:"list"); setWada(SITE_COLOUR); quietOff();
-  const list=PROJECTS.filter(x=>x.section===section), book=isBook(), J=section==="journal";
-  if(!list.length){
-    renderHead(section); swap(`<div class="cell" style="grid-column:1/13"><div class="pwords" style="left:${book?"44%":"8%"}"><span style="padding-left:1.2em">Journal.</span><span>Photographs</span><span style="padding-left:2.6em">away from</span><span style="padding-left:1.6em">architecture.</span><span class="dim by" style="padding-left:2.6em">First entries soon</span></div></div>`);
-    setFoot([["1/13",`<span class="dim">Journal</span>`]]); return;
-  }
-  if(J) return renderJournal(list, book);
+  const list=PROJECTS.filter(x=>x.section===section), book=isBook();
+  if(section==="journal") return renderJournal(list, book);
   const pv=state.hover && bySlug[state.hover] && bySlug[state.hover].section===section ? bySlug[state.hover] : list[0];
-  const table=`<div class="tbl"><div class="th"><span>${J?"Entry":"Project"}</span><span>${J?"About":"Architect"}</span><span class="c3">Location</span><span class="c4">Year</span></div>
-    ${list.map(x=>`<a href="/${x.slug}/" data-pv="${x.slug}" class="${book&&x===pv?"on":""}"><span class="t">${esc(x.title)}</span><span>${J?esc(x.role||""):x.listBy?esc(x.listBy):known(x.architect)?esc(x.architect):"&nbsp;"}</span><span class="c3">${esc(x.place.split(",")[0]||"")}</span><span class="c4">${x.listYear||x.year}</span></a>`).join("")}</div>`;
+  const table=`<div class="tbl"><div class="th"><span>Project</span><span>Architect</span><span class="c3">Location</span><span class="c4">Year</span></div>
+    ${list.map(x=>`<a href="/${x.slug}/" data-pv="${x.slug}" class="${book&&x===pv?"on":""}"><span class="t">${esc(x.title)}</span><span>${x.listBy?esc(x.listBy):x.architect?esc(x.architect):"&nbsp;"}</span><span class="c3">${esc(x.place.split(",")[0]||"")}</span><span class="c4">${x.listYear||x.year}</span></a>`).join("")}</div>`;
   if(book){
-    swap(fullHalf(pv,cov(pv),"L",null,true).replace('class="cell','id="pv" class="cell')+
+    swap(fullHalf(pv,cov(pv),"L").replace('class="cell','id="pv" class="cell')+
          `<div class="cell" style="grid-column:7/13"><div class="tbox full" style="display:block"><div class="scroll" style="height:100%">${table}</div></div></div>`);
     setTimeout(()=>document.querySelectorAll("[data-pv]").forEach(a=>a.addEventListener("mouseenter",()=>{
       const q=bySlug[a.dataset.pv]; state.hover=q.slug;
-      $("pv").querySelector("img").src=img(q,cov(q));
+      swapSrc($("pv").querySelector("img"),img(q,cov(q)));
       document.querySelectorAll("[data-pv]").forEach(b=>b.classList.toggle("on",b===a));
       listFoot(list,q);
     })),320);
@@ -443,7 +466,7 @@ function journalItems(list){
   // each entry gets its own width, from about one print to four, fixed per entry (from its slug) so it never reshuffles
   const BUDGETS=[1.2,2.3,3.25,4.1,2.8,1.7];
   const budgetOf=p=>{ let h=0; for(const ch of p.slug) h=(h*31+ch.charCodeAt(0))>>>0; return BUDGETS[h%BUDGETS.length]; };
-  const printsOf=p=>{ const order=[...(p.pick||[]), ...shown(p).filter(i=>!(p.pick||[]).includes(i))], out=[], B=p.printBudget||budgetOf(p); let sum=0;
+  const printsOf=p=>{ const order=[...(p.pick||[]), ...shown(p).filter(i=>!(p.pick||[]).includes(i))], out=[], B=budgetOf(p); let sum=0;
     if(p.printCount) return order.slice(0,p.printCount).map(i=>({r:ratio(p,i), src:thumb(p,i), i}));   // set by hand
     for(const i of order){ const r=ratio(p,i); if(out.length && sum+r>B) break; out.push({r, src:thumb(p,i), i}); sum+=r; if(out.length>=5) break; }
     return out; };
@@ -454,8 +477,7 @@ const fmtDate=d=>d? d.slice(5,7)+" "+d.slice(2,4) : "";      // month and year: 
 function renderJournal(list, book){
   const pad=parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--pad"))||20;
   const W=innerWidth-2*pad, gut=book? W/12*.5 : 0, pages=book?2:1, PW=book?(W-gut)/2:W, col=PW/6;
-  const band=innerHeight-(book?150:150);
-  const rh=book? Math.max(96,Math.min(150,PW*.2,band*.2)) : Math.max(84,PW*.27), pitch=rh+(book?64:46), hair=book?10:7;
+  const rh=book? Math.max(96,Math.min(150,PW*.2,(innerHeight-150)*.2)) : Math.max(84,PW*.27), pitch=rh+(book?64:46), hair=book?10:7;
   const rnd=k=>{ let h=(k*2654435761)>>>0; h^=h>>>15; h=Math.imul(h,2246822519)>>>0; h^=h>>>13; return (h>>>0)/4294967296; };
   const items=journalItems(list);
   let row=0, pg=0, x=0, k=0, html=""; const rowY=[0];
@@ -467,7 +489,7 @@ function renderJournal(list, book){
     // every row starts at the very left; the space between entries varies (on the right page, from the spine)
     const indent=()=> pg===0 ? 0 : col*Math.floor(rnd(++k)*5)*.5;
     // hand placement where set: jRow starts a new row, jPage moves to the next page, jGap sets the space before (in columns)
-    const P=it.p||{};
+    const P=it.p;
     if((P.jRow && (x>0||pg>0)) || (P.jPage && x>0)){ pg++; x=0; if(P.jRow||pg>=pages){ pg=0; row++; } }
     let start = x===0 ? (P.jGap!=null&&pg>0 ? col*P.jGap : indent()) : x + (P.jGap!=null ? col*P.jGap : col*(1+Math.floor(rnd(++k)*4)*.5));   // at least a column between entries
     if(P.jGap==null) start=Math.round(start/(col/2))*(col/2);   // hand-set gaps are kept exact
@@ -479,29 +501,26 @@ function renderJournal(list, book){
     }
     while(rowY.length<=row) rowY.push(rowY.length? rowY[rowY.length-1]+pitch+rh*(rnd(++k)*.3) : 0);
     let cx=pageX(pg)+start, y=rowY[row], h=rh*sc;
-    html+=`<div class="jset" data-j="${it.p?it.p.slug:""}" style="left:${cx}px;top:${y+(rh-h)}px;height:${h}px">`+
+    html+=`<div class="jset" style="left:${cx}px;top:${y+(rh-h)}px;height:${h}px">`+
       it.prints.map((q,j)=>{ const pw=h*q.r, l=it.prints.slice(0,j).reduce((a,z)=>a+h*z.r+hair,0);
-        return q.ph ? `<span class="jph" style="left:${l}px;width:${pw}px"></span>`
-                    : `<a href="/${it.p.slug}/" data-ji="${q.i}" style="left:${l}px;width:${pw}px"><img loading="lazy" src="${q.src}" alt="${it.p?altText(it.p,q.i):esc(it.title)}"></a>`; }).join("")+
+        return `<a href="/${it.p.slug}/" style="left:${l}px;width:${pw}px"><img loading="lazy" src="${q.src}" alt="${altText(it.p,q.i)}"></a>`; }).join("")+
       `<span class="n">${fmtDate(it.date)}</span></div>`;
     x=start+w;
-    const nx=items[n+1]&&items[n+1].p||{};
+    const nx=(items[n+1]||{}).p||{};
     if(nx.jGap==null && !nx.jPage && !nx.jRow && x>col*2.5 && rnd(++k)<.35){ pg++; x=0; if(pg>=pages){ pg=0; row++; } }      // sometimes a page row keeps just one cluster
   });
   const H=(rowY[row]||0)+pitch;
-  const spine = "";
-  swap(`<div class="cell" style="grid-column:1/13"><div class="tbox full" style="display:block"><div class="scroll" style="height:100%"><div class="jsheet" style="height:${H}px">${spine}${html}</div></div></div></div>`);
-  const real=list.length, foot=it=>setFoot([["1/7",`<span class="dim">Journal</span>`],["7/13",it?`${esc(it.title)}<span class="dim">${it.p&&it.p.role?" · "+esc(it.p.role):""} · ${fmtDate(it.date)}</span>`:`<span class="dim">${real} ${real===1?"entry":"entries"}</span>`,"right"]]);
+  swap(`<div class="cell" style="grid-column:1/13"><div class="tbox full" style="display:block"><div class="scroll" style="height:100%"><div class="jsheet" style="height:${H}px">${html}</div></div></div></div>`);
+  const real=list.length, foot=it=>setFoot([["1/7",`<span class="dim">Journal</span>`],["7/13",it?`${esc(it.title)}<span class="dim">${it.p.role?" · "+esc(it.p.role):""} · ${fmtDate(it.date)}</span>`:`<span class="dim">${real} ${real===1?"entry":"entries"}</span>`,"right"]]);
   foot(null);
   setTimeout(()=>{ const sets=[...document.querySelectorAll(".jset")];
     sets.forEach((el,n)=>{ el.addEventListener("mouseenter",()=>foot(items[n])); });
-    // a journal entry always opens at its first page, whichever print was clicked
   },320);
 }
 /* Commissions footer: follows the hovered project, showing its place in the list and its recognition if it has one */
 function listFoot(list,q){
   const n=list.indexOf(q)+1;
-  setFoot([["7/8",`${pad(n)} / ${pad(list.length)}`],["8/13",q.note?`<span class="acc">${esc(q.note)}</span>`:`<span class="dim">${q.section==="journal"?"Journal":"Selected commissions"}</span>`,"right"]]);
+  setFoot([["7/8",`${pad(n)} / ${pad(list.length)}`],["8/13",q.note?`<span class="acc">${esc(q.note)}</span>`:`<span class="dim">Selected commissions</span>`,"right"]]);
 }
 function pvClick(e){ const el=e.target.closest("#pv"); if(el && state.hover) go(state.hover); else if(el) go(PROJECTS.find(x=>x.section===state.route).slug); }
 
@@ -571,11 +590,7 @@ document.addEventListener("pointermove", e=>{
   if(!near && nearEdge) peek(900);
   nearEdge=near;
 });
-// Touch: the first tap on a hidden header or footer only brings them back
-["head","foot"].forEach(id=>$(id).addEventListener("click", e=>{
-  const w=$("world");
-  if(false){ e.preventDefault(); }
-}, true));
+// Touch: in quiet mode, a tap near the top or bottom brings the header and footer back for a few seconds
 $("stage").addEventListener("click", e=>{
   if(canHover) return;
   const w=$("world"); if(!w.classList.contains("quiet")) return;
@@ -586,7 +601,7 @@ $("stage").addEventListener("click", e=>{
 let swapT=null;
 function swap(html){
   const st=$("stage"); clearTimeout(swapT); document.removeEventListener("click",pvClick);
-  const go=()=>{ st.innerHTML=html; st.classList.remove("fade"); wire(); wakeVideos(); };
+  const go=()=>{ st.innerHTML=html; st.classList.remove("fade"); reveal(st); wire(); wakeVideos(); };
   if(st.children.length>0){ st.classList.add("fade"); swapT=setTimeout(go,260); } else go();
 }
 function wire(){
@@ -605,6 +620,9 @@ function wire(){
     const g=el.dataset.go; if(g==="0") return;
     el.onclick=e=>{ if(g==="half"){ step(e.clientX<innerWidth/2?-1:1); } else step(+g); };
   });
+  const h=$("homeImg");
+  if(h){ h.onmouseenter=()=>warmProject(homeCur,true);
+    const im=h.querySelector("img"); if(im.complete) homeShown(homeCur); else im.addEventListener("load",()=>homeShown(homeCur),{once:true}); }
   document.querySelectorAll("[data-img]").forEach(b=>b.onclick=()=>{
     const i=+b.dataset.img, S=spreads(state.project);
     state.page=Math.max(0,S.findIndex(s=>s.imgs.includes(i))); state.mode="pages"; renderProject();
@@ -614,12 +632,9 @@ function step(d){
   if(!bySlug[state.route]||state.mode!=="pages") return;
   const n=spreads(state.project).length; state.page=(state.page+d+n)%n; renderProject();
 }
-let pendingImg=null;
-document.addEventListener("click",e=>{ const a=e.target.closest("#homeImg"); if(a) pendingImg=+a.dataset.img; }, true);
 function route(keep){
   document.body.classList.remove("home");
   let h=location.pathname.split("/").filter(Boolean)[0]||"home";
-  if(h==="personal") h="commissions";
   if(!["home","commissions","journal","information"].includes(h)&&!bySlug[h]) h="home";
   state.route=h;
   if(h==="home") return renderHome();
@@ -627,7 +642,6 @@ function route(keep){
   if(h==="information") return renderInfo();
   if(keep===true && state.project===bySlug[h]) return renderProject();
   state.project=bySlug[h]; state.page=0; state.mode="pages";
-  if(pendingImg!==null){ const S=spreads(state.project); state.page=Math.max(0,S.findIndex(x=>x.imgs.includes(pendingImg))); pendingImg=null; }
   renderProject();
 }
 function layoutMode(){ document.body.classList.toggle("single",!isBook()); }
@@ -638,8 +652,6 @@ document.addEventListener("click",e=>{
   const a=e.target.closest('a[href^="/"]'); if(!a || e.defaultPrevented || e.metaKey || e.ctrlKey || e.shiftKey || a.target) return;
   e.preventDefault(); const u=a.getAttribute("href"); if(u!==location.pathname) history.pushState(null,"",u); route();
 });
-// old #addresses from the prototype still work
-if(location.hash.length>1 && location.pathname==="/") history.replaceState(null,"","/"+location.hash.slice(1)+"/");
 let wasBook=isBook(), rz;
 addEventListener("resize",()=>{ clearTimeout(rz); rz=setTimeout(()=>{
   const b=isBook(); layoutMode();
