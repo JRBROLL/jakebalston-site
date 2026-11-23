@@ -24,6 +24,9 @@ const WADA = {   // exact swatches only. pale = paper, ink = text, acc = small d
   55:{pale:"#ffffff", ink:"#d46d7a", acc:"#d46d7a", names:"White · Old Rose"},
   84:{pale:"#fdd4bd", ink:"#112f2c", acc:"#112f2c", names:"Seashell Pink · Deep Slate Green"},
   60:{pale:"#ffefae", ink:"#12354e", acc:"#12354e", names:"Pale Lemon Yellow · Dark Tyrian Blue"},
+  104:{pale:"#f5ecc2", ink:"#a62c37", acc:"#a62c37", names:"Sulpher Yellow · Carmine Red"},
+  94:{pale:"#ebd3a2", ink:"#004f46", acc:"#004f46", names:"Ivory Buff · Dusky Green"},
+  50:{pale:"#ebd3a2", ink:"#4e1d4c", acc:"#4e1d4c", names:"Ivory Buff · Dusky Madder Violet"},
   321:{pale:"#f5ecc2", ink:"#253122", acc:"#97acc8", names:"Sulpher Yellow · Deep Slate Olive · Salvia Blue · Light Brown Drab"},
   343:{pale:"#ebd3a2", ink:"#ae5224", acc:"#064f6e", names:"Ivory Buff · Burnt Sienna · Vandar Poel's Blue"},
 };
@@ -31,7 +34,7 @@ const WADA = {   // exact swatches only. pale = paper, ink = text, acc = small d
 
 
 // Every swatch on each plate, in the book's order, for the little colour tag at the left edge
-const PLATE_SWATCHES = {"60": ["#ffefae", "#12354e"], "84": ["#fdd4bd", "#112f2c"], "55": ["#ffffff", "#d46d7a"], "321": ["#f5ecc2", "#253122", "#97acc8", "#b59392"], "52": ["#f5ecc2", "#111314"], "207": ["#b4cdc2", "#111314", "#a36752"], "234": ["#fdc57e", "#71502f", "#a7d4e4"], "192": ["#fdbf68", "#4b3317", "#70727c"], "266": ["#e31f26", "#ebd3a2", "#8fa071", "#00978d"], "310": ["#f5ecc2", "#eeb480", "#837e31", "#253122"], "296": ["#f5ecc2", "#d8a37b", "#71502f", "#34454c"], "190": ["#ebd3a2", "#d96629", "#111314"], "243": ["#bb7125", "#ebd3a2", "#6b7140", "#34454c"], "246": ["#f8b6ba", "#a84222", "#f5ecc2", "#fdc57e"], "126": ["#ebd3a2", "#e2b540", "#1c4286"], "262": ["#da525d", "#ebd3a2", "#b09f36", "#437742"], "214": ["#ebd3a2", "#a36752", "#4f4086"], "113": ["#fdd4bd", "#4b3317"], "270": ["#da525d", "#f5ecc2", "#6b7140", "#437742"], "151": ["#f5ecc2", "#f99d1b", "#064f6e"], "343": ["#ae5224", "#ebd3a2", "#635a3a", "#064f6e"]};
+const PLATE_SWATCHES = {"50": ["#ebd3a2", "#4e1d4c"], "94": ["#ebd3a2", "#004f46"], "104": ["#f5ecc2", "#a62c37"], "60": ["#ffefae", "#12354e"], "84": ["#fdd4bd", "#112f2c"], "55": ["#ffffff", "#d46d7a"], "321": ["#f5ecc2", "#253122", "#97acc8", "#b59392"], "52": ["#f5ecc2", "#111314"], "207": ["#b4cdc2", "#111314", "#a36752"], "234": ["#fdc57e", "#71502f", "#a7d4e4"], "192": ["#fdbf68", "#4b3317", "#70727c"], "266": ["#e31f26", "#ebd3a2", "#8fa071", "#00978d"], "310": ["#f5ecc2", "#eeb480", "#837e31", "#253122"], "296": ["#f5ecc2", "#d8a37b", "#71502f", "#34454c"], "190": ["#ebd3a2", "#d96629", "#111314"], "243": ["#bb7125", "#ebd3a2", "#6b7140", "#34454c"], "246": ["#f8b6ba", "#a84222", "#f5ecc2", "#fdc57e"], "126": ["#ebd3a2", "#e2b540", "#1c4286"], "262": ["#da525d", "#ebd3a2", "#b09f36", "#437742"], "214": ["#ebd3a2", "#a36752", "#4f4086"], "113": ["#fdd4bd", "#4b3317"], "270": ["#da525d", "#f5ecc2", "#6b7140", "#437742"], "151": ["#f5ecc2", "#f99d1b", "#064f6e"], "343": ["#ae5224", "#ebd3a2", "#635a3a", "#064f6e"]};
 const plateOf = k => (WADA[k]&&WADA[k].plate) || k;
 const SITE_COLOUR = 296;
 
@@ -41,6 +44,7 @@ const toHex=a=>"#"+a.map(v=>Math.max(0,Math.min(255,Math.round(v))).toString(16)
 const mix=(a,b,t)=>toHex(hx(a).map((v,i)=>v*(1-t)+hx(b)[i]*t));
 let colourState=0, currentWada=SITE_COLOUR;  // 0 full colour · 1 all black & white · 2 colour photographs, calm site
 /* Take saturation out of a colour, keeping its hue and lightness (f = share kept) */
+function toWhite(h,f){ return toHex(hx(h).map(v=>v+(255-v)*f)); }
 function desat(h,f){
   let [r,g,b]=hx(h).map(v=>v/255); const mx=Math.max(r,g,b), mn=Math.min(r,g,b), l=(mx+mn)/2, d=mx-mn;
   if(!d) return h;
@@ -50,11 +54,12 @@ function desat(h,f){
   return toHex([a+m,b2+m,c2+m].map(v=>v*255));
 }
 const PAPER_SAT=.8;                 // every paper keeps 80% of its saturation
-const QUIET_GROUND="#d6d6d6";       // black and white modes: an 84% grey-white
+const PAPER_WHITE=.2;               // ...and is then lifted 20% of the way towards white
+const QUIET_GROUND="#ebebeb";       // black and white modes: a 92% grey-white
 function applyColour(){
   const w = WADA[currentWada];
   const base = colourState===2 || !w ? NEUTRAL : {ground: w.pale, ink: w.ink, acc: w.acc};
-  const pal = {...base, ground: colourState===0 ? desat(base.ground,PAPER_SAT) : QUIET_GROUND};
+  const pal = {...base, ground: colourState===0 ? toWhite(desat(base.ground,PAPER_SAT),PAPER_WHITE) : QUIET_GROUND};
   const r=document.documentElement.style, G=hx(pal.ground);
   r.setProperty("--ground", pal.ground); r.setProperty("--ink", pal.ink);
   r.setProperty("--muted", mix(pal.ink, pal.ground, .5)); r.setProperty("--accent", pal.acc);
@@ -134,7 +139,7 @@ function imgBox(p,i,cols,t=0,h=1,pos="center"){
 function fullHalf(p,i,side,src,crop,mov){
   const W=innerWidth/2+parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--pad")||20), H=innerHeight;
   const cover = crop || Math.abs(Math.log(ratio(p,i)/(W/H)))<.22;   // near the shape of the half: fill it; otherwise show whole at full height
-  return `<div class="cell full ${side==="L"?"bleedL":"bleedR"}" style="grid-column:${side==="L"?"1/7":"7/13"}"><img src="${src||img(p,i)}" style="object-fit:${cover?"cover":"contain"};object-position:${p.coverAlign&&mov?p.coverAlign:side==="L"?"left":"right"} center" alt="${altText(p,i)}">${!mov?"":vidTag(p,i,`object-fit:${cover?"cover":"contain"};object-position:${p.coverAlign||(side==="L"?"left":"right")} center`)}</div>`;
+  return `<div class="cell full ${side==="L"?"bleedL":"bleedR"}" style="grid-column:${side==="L"?"1/7":"7/13"}"><img src="${src||img(p,i)}" style="object-fit:${cover?"cover":"contain"};object-position:${mov&&p.coverPos?p.coverPos:(p.coverAlign&&mov?p.coverAlign:side==="L"?"left":"right")+" center"}" alt="${altText(p,i)}">${!mov?"":vidTag(p,i,`object-fit:${cover?"cover":"contain"};object-position:${p.coverAlign||(side==="L"?"left":"right")} center`)}</div>`;
 }
 function imageCell(p,i,side){ return imgBox(p,i,half(side),0,1, side==="L"?"left center":side==="R"?"right center":"center"); }
 const textCell=(side,inner,cls="",attrs="")=>`<div class="cell ${cls}" style="grid-column:${half(side)}" ${attrs}><div class="tbox">${inner}</div></div>`;
@@ -479,7 +484,7 @@ function renderJournal(list, book){
     const P=it.p||{};
     if((P.jRow && (x>0||pg>0)) || (P.jPage && x>0)){ pg++; x=0; if(P.jRow||pg>=pages){ pg=0; row++; } }
     let start = x===0 ? (P.jGap!=null&&pg>0 ? col*P.jGap : indent()) : x + (P.jGap!=null ? col*P.jGap : col*(1+Math.floor(rnd(++k)*4)*.5));   // at least a column between entries
-    start=Math.round(start/(col/2))*(col/2);
+    if(P.jGap==null) start=Math.round(start/(col/2))*(col/2);   // hand-set gaps are kept exact
     if(x===0 && start+w>PW) start=0;                  // a fresh page always takes the cluster
     if(start+w>PW){                                     // no room: next page, or the next row
       pg++; x=0; if(pg>=pages){ pg=0; row++; }
@@ -494,7 +499,8 @@ function renderJournal(list, book){
                     : `<a href="/${it.p.slug}/" data-ji="${q.i}" style="left:${l}px;width:${pw}px"><img loading="lazy" src="${q.src}" alt="${it.p?altText(it.p,q.i):esc(it.title)}"></a>`; }).join("")+
       `<span class="n">${fmtDate(it.date)}</span></div>`;
     x=start+w;
-    if(x>col*2.5 && rnd(++k)<.35){ pg++; x=0; if(pg>=pages){ pg=0; row++; } }      // sometimes a page row keeps just one cluster
+    const nx=items[n+1]&&items[n+1].p||{};
+    if(nx.jGap==null && !nx.jPage && !nx.jRow && x>col*2.5 && rnd(++k)<.35){ pg++; x=0; if(pg>=pages){ pg=0; row++; } }      // sometimes a page row keeps just one cluster
   });
   const H=(rowY[row]||0)+pitch;
   const spine = "";
