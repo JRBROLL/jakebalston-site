@@ -171,7 +171,7 @@ function splitTwo(words){ let best=[words.join(" "),""], d=1e9;
 
 /* ---------- Header and footer ---------- */
 function renderHead(active, where){
-  const book=isBook(), name=`<a class="name" href="/">Jake Balston</a><div class="dim" style="margin-top:4px">Architectural photographer<br>Based in the UK</div>`;
+  const book=isBook(), name=`<a class="name" href="/">Jake Balston</a><div class="dim" style="margin-top:4px">Architectural photographer<br>Based in the UK, working worldwide</div>`;
   const sw=`<button class="mono-btn" id="monoBtn"></button>`;
   const contact=`<span class="dim">Enquiries</span><br><a href="mailto:info@jakebalston.com">info@jakebalston.com</a><br><a href="https://instagram.com/jakebalston">Instagram</a>`;
   if(!book) $("head").innerHTML=`<div style="grid-column:1/3"><a class="name" href="/" aria-label="Jake Balston">JB</a></div>
@@ -412,7 +412,7 @@ function renderHome(){
   if(!book){
     swap(`<div class="cell" style="grid-column:1/13">
       <a id="homeImg" href="/${p.slug}/" style="position:absolute;left:8%;right:8%;top:22%;height:50%;display:block">${photo}</a></div>`);
-    setFoot([["1/13",`<div style="text-align:center">Architecture and interiors, photographed<br>for architects, designers and publishers.</div>`]]);
+    setFoot([["1/13",`<div style="text-align:center">Architecture and interiors, photographed<br>for architects, designers and publishers.<div class="dim" style="margin-top:6px">Based in the UK, working worldwide</div></div>`]]);
   } else swap(`<div class="cell" style="grid-column:1/13">
       <div style="position:absolute;left:0;top:50%;transform:translateY(-50%);text-transform:uppercase;letter-spacing:.08em">Architectural photography</div>
       <div style="position:absolute;right:0;top:50%;transform:translateY(-50%);text-transform:uppercase;letter-spacing:.08em;text-align:right">Working worldwide</div>
