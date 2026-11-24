@@ -81,7 +81,7 @@ function homeAll(){ const a=[]; PROJECTS.filter(p=>p.section==="commissions").fo
 /* ---------- Images ----------
    <slug>-NN.jpg is Jake's export, untouched; -m.jpg a 1600px copy (the phone home page), -t.jpg an 800px thumbnail.
    IMG_V goes on every address: change it whenever the photographs are replaced, so browsers fetch the new ones. */
-const IMG_V="?v=2611b";
+const IMG_V="?v=2611c";
 
 function ratio(p,i){ const d=DIMS[p.slug][i]; return d[0]/d[1]; }
 const imgFile=(p,i,suf="")=>`/img/${p.slug}-${String(i+1).padStart(2,"0")}${suf}.jpg${IMG_V}`;
@@ -533,7 +533,7 @@ function renderInfo(){
   const t=fitDisplay("Photographs of buildings, for the people who make them.", book?6:12);
   const inv=`<div class="inv">
     <div class="k">Contact</div><div class="v"><a href="mailto:info@jakebalston.com">info@jakebalston.com</a><div>+44 7791 760 474</div><div><a href="https://instagram.com/jakebalston">Instagram</a></div></div>
-    <div class="k">Awards</div><div class="v">${AWARDS.map(([y,a,p])=>`<div>${esc(a)} <span>${esc(p)}, ${y}</span></div>`).join("")}</div>
+    <div class="k">Project awards</div><div class="v">${AWARDS.map(([y,a,p])=>`<div>${esc(a)} <span>${esc(p)}, ${y}</span></div>`).join("")}</div>
     <div class="k">Publications</div><div class="v">${PRESS.map(([a,p])=>`<div>${esc(a)} <span>${esc(p)}</span></div>`).join("")}</div>
     <div class="k">Books</div><div class="v">${BOOKS.map(([a,p])=>`<div>${esc(a)} <span>${esc(p)}</span></div>`).join("")}</div>
     <div class="k">Clients</div><div class="v">${CLIENTS.map(c=>`<div>${esc(c)}</div>`).join("")}</div>
