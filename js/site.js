@@ -675,5 +675,16 @@ $("stage").addEventListener("touchend",e=>{ if(tx===null)return; const dx=e.chan
 try{ const c=+localStorage.getItem("jb-colour"); if(c===1||c===2){ colourState=c; spins=c; document.documentElement.style.setProperty("--rot",(c*180)+"deg"); } }catch(e){}
 applyColour();
 layoutMode();
+/* Visitor numbers: Cloudflare Web Analytics, no cookies. spa:true counts every project opened, not just the first page.
+   Only on the live site. Visiting jakebalston.com/?me stops your own visits counting on that browser; /?me=off undoes it. */
+try{
+  const q=new URLSearchParams(location.search);
+  if(q.has("me")){ q.get("me")==="off" ? localStorage.removeItem("jb-me") : localStorage.setItem("jb-me","1");
+    history.replaceState(null,"",location.pathname); }
+  if(location.hostname==="jakebalston.com" && !localStorage.getItem("jb-me")){
+    const b=document.createElement("script"); b.defer=true; b.src="https://static.cloudflareinsights.com/beacon.min.js";
+    b.dataset.cfBeacon=JSON.stringify({token:"3aa6b39d3a2a4b36aec479aeb41bb6df",spa:true}); document.head.appendChild(b);
+  }
+}catch(e){}
 $("stage").innerHTML="";  // the text version of the page (for search engines) gives way to the real one
 (document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve()).then(()=>route());
