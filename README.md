@@ -9,7 +9,7 @@ The portfolio site of Jake Balston, architectural photographer. Plain HTML, CSS 
 | `js/content.js` | **All the words and running orders.** This covers project text, architects' quotes, spreads, colours, awards, press, clients and journal entries. This is the file to edit. |
 | `js/site.js` | How the site behaves: the photobook spreads, the phone pages, colour modes and navigation. |
 | `css/site.css` | How the site looks. |
-| `img/` | Photographs: `<project>-01.webp` (the full photograph), `-m.webp` (1600px, the phone home page) and `-t.webp` (800px thumbnails). Credit and description are written into each file by `tools/tag_images.py`. When photos are replaced, change `IMG_V` at the top of the images section in `site.js` so browsers fetch the new ones. |
+| `img/` | Photographs: `<project>-01.jpg` (Jake's export, served untouched), `-m.jpg` (1600px, the phone home page) and `-t.jpg` (800px thumbnails). Credit and description are written into each file by `tools/tag_images.py`. When photos are replaced, change `IMG_V` at the top of the images section in `site.js` so browsers fetch the new ones. |
 | `<project>/index.html` | One page per project at a clean address (for example `/osprey-house/`). Each holds the title, description and share image that Google and social sites read. |
 | `og/` | Share images (1200×630) used when a page is posted on social media or in messages. |
 | `sitemap.xml`, `robots.txt` | Tell Google which pages exist. |

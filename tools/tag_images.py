@@ -5,7 +5,7 @@ Usage (from the site folder):  python3 tools/tag_images.py
 Descriptions come from ALTS in js/content.js. Each file gets an EXIF block (Artist, Copyright,
 ImageDescription) and an XMP block (IPTC / Dublin Core credit fields). Existing EXIF and XMP are
 replaced, so running it twice is safe. The colour profile and the image data are never touched.
-Works on WebP and JPEG."""
+Works on JPEG."""
 import glob, json, re, struct, subprocess
 from xml.sax.saxutils import escape
 from PIL import Image
@@ -41,29 +41,6 @@ def xmp_bytes(desc, title):
 <?xpacket end="w"?>'''.encode("utf-8")
 
 
-# ---------- WebP: RIFF chunks ----------
-def chunk(tag, data):
-    return tag + struct.pack("<I", len(data)) + data + (b"\0" if len(data) % 2 else b"")
-
-
-def tag_webp(b, desc, title, size):
-    assert b[:4] == b"RIFF" and b[8:12] == b"WEBP"
-    chunks, i = [], 12
-    while i < len(b):
-        t, n = b[i:i + 4], struct.unpack("<I", b[i + 4:i + 8])[0]
-        chunks.append((t, b[i + 8:i + 8 + n])); i += 8 + n + (n & 1)
-    keep = [(t, d) for t, d in chunks if t not in (b"VP8X", b"EXIF", b"XMP ")]
-    icc = any(t == b"ICCP" for t, _ in keep)
-    w, h = size
-    flags = 0x08 | 0x04 | (0x20 if icc else 0)                      # EXIF + XMP (+ ICC)
-    vp8x = bytes([flags, 0, 0, 0]) + (w - 1).to_bytes(3, "little") + (h - 1).to_bytes(3, "little")
-    # order the spec asks for: VP8X, ICCP, image data, EXIF, XMP
-    body = chunk(b"VP8X", vp8x) + b"".join(chunk(t, d) for t, d in keep if t == b"ICCP") \
-         + b"".join(chunk(t, d) for t, d in keep if t != b"ICCP") \
-         + chunk(b"EXIF", exif_bytes(desc)[6:]) + chunk(b"XMP ", xmp_bytes(desc, title))
-    return b"RIFF" + struct.pack("<I", len(body) + 4) + b"WEBP" + body
-
-
 # ---------- JPEG: marker segments before the image data ----------
 XMP_NS = b"http://ns.adobe.com/xap/1.0/\0"
 
@@ -90,14 +67,14 @@ def tag_jpeg(b, desc, title):
 
 
 n = 0
-for f in sorted(glob.glob("img/*.webp") + glob.glob("img/*.jpg")):
-    m = re.match(r"img/(.+)-(\d\d)(-[tm])?\.(webp|jpg)$", f)
+for f in sorted(glob.glob("img/*.jpg")):
+    m = re.match(r"img/(.+)-(\d\d)(-[tm])?\.jpg$", f)
     slug, num = m.group(1), str(int(m.group(2)))
     title = TITLES.get(slug, slug)
     desc = ALTS.get(slug, {}).get(num) or f"{title}, photograph {num} by Jake Balston"
     b = open(f, "rb").read()
-    before = Image.open(f); size, px = before.size, before.tobytes()
-    out = tag_webp(b, desc, f"{title}, photograph {num}", size) if f.endswith(".webp") else tag_jpeg(b, desc, f"{title}, photograph {num}")
+    px = Image.open(f).tobytes()
+    out = tag_jpeg(b, desc, f"{title}, photograph {num}")
     open(f, "wb").write(out)
     after = Image.open(f)
     assert after.tobytes() == px, f                                 # the picture itself is untouched

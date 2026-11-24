@@ -79,12 +79,12 @@ function homeAll(){ const a=[]; PROJECTS.filter(p=>p.section==="commissions").fo
   for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
 
 /* ---------- Images ----------
-   <slug>-NN.webp is the full photograph, -m.webp a 1600px copy (the phone home page), -t.webp an 800px thumbnail.
+   <slug>-NN.jpg is Jake's export, untouched; -m.jpg a 1600px copy (the phone home page), -t.jpg an 800px thumbnail.
    IMG_V goes on every address: change it whenever the photographs are replaced, so browsers fetch the new ones. */
-const IMG_V="?v=2611";
+const IMG_V="?v=2611b";
 
 function ratio(p,i){ const d=DIMS[p.slug][i]; return d[0]/d[1]; }
-const imgFile=(p,i,suf="")=>`/img/${p.slug}-${String(i+1).padStart(2,"0")}${suf}.webp${IMG_V}`;
+const imgFile=(p,i,suf="")=>`/img/${p.slug}-${String(i+1).padStart(2,"0")}${suf}.jpg${IMG_V}`;
 const img=(p,i)=>imgFile(p,i), mid=(p,i)=>imgFile(p,i,"-m"), thumb=(p,i)=>imgFile(p,i,"-t");
 /* Moving photographs: the still is the poster and stays in place; the clip loads only when it is on screen and fades in over it */
 const hasVid=(p,i)=>typeof VIDS!=="undefined" && (VIDS[p.slug]||[]).includes(i+1);

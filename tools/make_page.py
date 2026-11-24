@@ -13,7 +13,7 @@ def clip(t, n=158):
     t = re.sub(r"\s+", " ", t or "").strip()
     return t if len(t) <= n else t[:t.rfind(" ", 0, n)].rstrip(",;:") + "…"
 def og(slug, idx):
-    src = f"{OUT}/img/{slug}-{idx:02d}.webp"; im = Image.open(src).convert("RGB")
+    src = f"{OUT}/img/{slug}-{idx:02d}.jpg"; im = Image.open(src).convert("RGB")
     W, H = 1200, 630; r = max(W/im.width, H/im.height)
     im = im.resize((round(im.width*r), round(im.height*r)), Image.LANCZOS)
     l, t = (im.width-W)//2, (im.height-H)//2
@@ -82,7 +82,7 @@ for p in P:
     desc = clip(p.get("text") or f'{p["title"]}{" by " + who if who else ""}, {p.get("place","")}. Photographed by Jake Balston.')
     n = len([i for i in range(p["count"]) if (i+1) not in (C["DROPS"].get(slug) or [])])
     quotes = "".join(f'<blockquote>{e(q["q"])} <cite>{e(q["by"])}</cite></blockquote>' for q in p.get("quotes") or [])
-    alts = "".join(f'<li><img src="/img/{slug}-{i+1:02d}-t.webp" alt="{e(ALT(slug,i,p,who))}" loading="lazy" width="{round(800*C["DIMS"][slug][i][0]/max(C["DIMS"][slug][i]))}" height="{round(800*C["DIMS"][slug][i][1]/max(C["DIMS"][slug][i]))}"></li>'
+    alts = "".join(f'<li><img src="/img/{slug}-{i+1:02d}-t.jpg" alt="{e(ALT(slug,i,p,who))}" loading="lazy" width="{round(800*C["DIMS"][slug][i][0]/max(C["DIMS"][slug][i]))}" height="{round(800*C["DIMS"][slug][i][1]/max(C["DIMS"][slug][i]))}"></li>'
                    for i in range(p["count"]) if (i+1) not in (C["DROPS"].get(slug) or []))
     facts = "".join(f"<dt>{k}</dt><dd>{e(v)}</dd>" for k, v in [(p.get("archLabel") or "Architect", who), *[(c[0], c[1]) for c in p.get("credits") or []], ("With", p.get("with")), ("Location", p.get("place")), ("Year", p.get("year")), ("Recognition", p.get("note"))] if v)
     body = f'<h1>{e(p["title"])}</h1>{NAV}<dl>{facts}</dl><p>{e(p.get("text",""))}</p>{quotes}<p>{n} photographs by Jake Balston.</p><ul>{alts}</ul>'
@@ -93,8 +93,8 @@ for p in P:
     if who: work["about"] = {"@type": "Organization", "name": who, **({"url": p["site"]} if p.get("site") else {})}
     if p.get("credits"): work["contributor"] = [{"@type": "Organization", "name": c[1], **({"url": c[2]} if len(c) > 2 else {})} for c in p["credits"]]
     shown_ = [i for i in range(p["count"]) if (i+1) not in (C["DROPS"].get(slug) or [])]
-    work["associatedMedia"] = [{"@type": "ImageObject", "contentUrl": f"{DOMAIN}/img/{slug}-{i+1:02d}.webp",
-        "thumbnailUrl": f"{DOMAIN}/img/{slug}-{i+1:02d}-t.webp", "description": ALT(slug, i, p, who),
+    work["associatedMedia"] = [{"@type": "ImageObject", "contentUrl": f"{DOMAIN}/img/{slug}-{i+1:02d}.jpg",
+        "thumbnailUrl": f"{DOMAIN}/img/{slug}-{i+1:02d}-t.jpg", "description": ALT(slug, i, p, who),
         "name": f'{p["title"]}, photograph {i+1}', "creator": {"@id": DOMAIN + "/#jake"}, "creditText": "Jake Balston",
         "copyrightNotice": "© Jake Balston", "copyrightHolder": {"@id": DOMAIN + "/#jake"},
         "acquireLicensePage": DOMAIN + "/information/", **artwork(slug, i)} for i in shown_]
@@ -103,7 +103,7 @@ for p in P:
 
 # sitemap: add or replace this page's entry
 sm = open("sitemap.xml").read()
-imgs = "".join(f"<image:image><image:loc>{DOMAIN}/img/{slug}-{i+1:02d}.webp</image:loc></image:image>" for i in shown_)
+imgs = "".join(f"<image:image><image:loc>{DOMAIN}/img/{slug}-{i+1:02d}.jpg</image:loc></image:image>" for i in shown_)
 entry = f"<url><loc>{DOMAIN}/{slug}/</loc>{imgs}</url>"
 sm = re.sub(rf"<url><loc>{re.escape(DOMAIN)}/{re.escape(slug)}/</loc>.*?</url>\n?", "", sm)
 sm = sm.replace("</urlset>", entry + "\n</urlset>")
