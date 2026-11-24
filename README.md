@@ -15,7 +15,7 @@ The portfolio site of Jake Balston, architectural photographer. Plain HTML, CSS 
 | `sitemap.xml`, `robots.txt` | Tell Google which pages exist. |
 | `_redirects` | Keeps the old Squarespace addresses working. |
 | `_headers` | Caching rules for Cloudflare. Photos are kept by browsers for a year, which is why `IMG_V` matters. |
-| `tools/` | `make_page.py <slug>` builds a project's page, share image and sitemap entry; `tag_images.py` writes credits into the photos. |
+| `tools/` | `make_page.py <slug>` builds a project's page, share image and sitemap entry; `tag_images.py` writes credits into the photos; `page_colours.py` writes each page's paper colour into its head (run it after `make_page.py`), so phone browser bars match from the first moment. |
 
 ## Editing words
 
